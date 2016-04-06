@@ -23,24 +23,25 @@ namespace _4chan_Thread_Saver
         public MainWindow()
         {
             InitializeComponent();
+            // Set our global variables
             getGlobalVarsFromConfig();
 
+            // Wire up drag/drop event handlers
             urlTb.DragEnter += new DragEventHandler(urlTb_DragEnter);
             urlTb.DragDrop += new DragEventHandler(urlTb_DragDrop);
 
             directoryTb.DragEnter += new DragEventHandler(directoryTb_DragEnter);
             directoryTb.DragDrop += new DragEventHandler(directoryTb_DragDrop);
 
+            // Wire up the tab changed event handler
             tabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
 
-            saveBackgroundWorker.WorkerReportsProgress = true;
-            saveBackgroundWorker.RunWorkerCompleted += backgroundWorker_Callback;
-            saveBackgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
+            // Wire up the async operations event handlers
+            backgroundWorker.WorkerReportsProgress = true;
+            backgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
+            backgroundWorker.RunWorkerCompleted += backgroundWorker_Callback;
 
-            decryptBackgroundWorker.WorkerReportsProgress = true;
-            decryptBackgroundWorker.RunWorkerCompleted += backgroundWorker_Callback;
-            decryptBackgroundWorker.ProgressChanged += backgroundWorker_ProgressChanged;
-
+            // If the clipboard contains a 4chan thread URL, pre-populate the URL textbox with it
             if (clipboardTextIsThreadURL())
             {
                 urlTb.Text = Clipboard.GetText();
@@ -48,14 +49,17 @@ namespace _4chan_Thread_Saver
         }
 
         #region Async Operations Handlers
-        private void saveBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            save();
-        }
-
-        private void decryptBackgroundWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            decrypt();
+            // Since there's only one background worker, check to see which function we are supposed to do
+            if ((string)e.Argument == "save")
+            {
+                save();
+            }
+            else
+            {
+                decrypt();
+            }
         }
 
         private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -63,7 +67,7 @@ namespace _4chan_Thread_Saver
             progressBar1.Value = e.ProgressPercentage;
         }
 
-        private void backgroundWorker_Callback(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        private void backgroundWorker_Callback(object sender, RunWorkerCompletedEventArgs e)
         {
             finishRun();
         }
@@ -77,20 +81,25 @@ namespace _4chan_Thread_Saver
 
         private void optionsBtn_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            // Open the options window, making sure to pass a reference to this window. 
+            // This is so the Options window can set our global vars when it's saved.
+            // We can't do it here since the window is shown async
             Options options = new Options(this);
             options.Show();
         }
 
         private void openSavedFolderBtn_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string directory = BASEDIRECTORY.Replace("%userprofile%", Environment.GetEnvironmentVariable("userprofile"));
+            // Open the saved threads folder, creating it if necessary
+            string directory = Environment.ExpandEnvironmentVariables(BASEDIRECTORY);
             Directory.CreateDirectory(directory);
             Process.Start(directory);
         }
 
         private void openEncFolderBtn_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            string directory = Path.Combine(BASEDIRECTORY.Replace("%userprofile%", Environment.GetEnvironmentVariable("userprofile")), ENCRYPTEDSUBDIRECTORY);
+            // Open the encrypted threads folder, creating it if necessary
+            string directory = Path.Combine(Environment.ExpandEnvironmentVariables(BASEDIRECTORY), Environment.ExpandEnvironmentVariables(ENCRYPTEDSUBDIRECTORY));
             Directory.CreateDirectory(directory);
             Process.Start(directory);
         }
@@ -99,6 +108,7 @@ namespace _4chan_Thread_Saver
         #region Drag/Drop Event Handlers
         private void urlTb_DragEnter(object sender, DragEventArgs e)
         {
+            // Change the mouse icon depending if the user is trying to drop something legit
             if (e.Data.GetDataPresent(DataFormats.UnicodeText))
             {
                 e.Effect = DragDropEffects.Copy;
@@ -113,6 +123,7 @@ namespace _4chan_Thread_Saver
         {
             string url = (string)e.Data.GetData(DataFormats.UnicodeText, false);
 
+            // Only set the text of the textbox if it's a valid URL
             if (URLIsValid(url))
             {
                 urlTb.Text = url;
@@ -121,6 +132,7 @@ namespace _4chan_Thread_Saver
 
         private void directoryTb_DragEnter(object sender, DragEventArgs e)
         {
+            // Change the mouse icon depending if the user is trying to drop something legit
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
@@ -137,6 +149,7 @@ namespace _4chan_Thread_Saver
 
             string s = "";
 
+            // Parse the file list from the FileDrop object and set the textbox text
             foreach (string File in FileList)
             {
                 s = s + " " + File;
@@ -148,11 +161,13 @@ namespace _4chan_Thread_Saver
         #region Control State Changed Event Handlers
         private void encryptCb_CheckedChanged(object sender, EventArgs e)
         {
+            // Password textbox should only be enabled if the "Require Password" checkbox is checked
             passwordTb.Enabled = encryptCb.Checked;
         }
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Change the text of the Go button depending on the selected tab
             if (tabControl1.SelectedTab.Name == "saveTab")
             {
                 goBtn.Text = "Save Images";
@@ -166,32 +181,36 @@ namespace _4chan_Thread_Saver
         #endregion
 
         #region Action Functions
+        /// <summary>
+        /// Function called to start processing
+        /// </summary>
         private void startRun()
         {
+            // Perform the correct action depending on the selected tab
+            string arg;
             if (tabControl1.SelectedTab.Name == "saveTab")
             {
+                arg = "save";
                 goBtn.Text = "Saving Images";
             }
             else
             {
+                arg = "decrypt";
                 goBtn.Text = "Decrypting Images";
             }
 
             goBtn.Enabled = false;
             progressBar1.Show();
-
-            if (tabControl1.SelectedTab.Name == "saveTab")
-            {
-                saveBackgroundWorker.RunWorkerAsync();
-            }
-            else
-            {
-                decryptBackgroundWorker.RunWorkerAsync();
-            }
+            // Start the background worker, passing in the process we want to run
+            backgroundWorker.RunWorkerAsync(arg);
         }
 
+        /// <summary>
+        /// Function called when processing finishes/errors out
+        /// </summary>
         private void finishRun()
         {
+            // Reset GUI elements
             progressBar1.Hide();
             progressBar1.Value = 0;
             goBtn.Enabled = true;
@@ -206,47 +225,64 @@ namespace _4chan_Thread_Saver
             }
         }
 
+        /// <summary>
+        /// Main save function
+        /// </summary>
         private void save()
         {
-            try {
+            try
+            {
                 string url = urlTb.Text;
 
+                // Only proceed of the URL textbox contains a valid 4chan thread URL
                 if (URLIsValid(url) && (!encryptCb.Checked || passwordTb.Text.Length > 0))
                 {
                     HtmlAgilityPack.HtmlDocument doc = getTheadDocument(url);
 
+                    // Only proceed if the thread is found (i.e. hasn't 404'ed, or the user passes in a URL that the regex says is valid but really doesn't exist)
                     if (threadIsFound(doc))
                     {
                         string fullDirectory, fileName, href = string.Empty;
-
                         HtmlNodeCollection nodes = getImageNodes(doc);
                         WebClient webClient = new WebClient();
 
+                        // Instantiate variables used to report progress
                         int currentItemIndex = 1;
                         int totalItemsCount = nodes.Count;
+                        int percentComplete;
+
+                        // Iterate through each matching anchor tag. These tags contain the image name and the href. 
                         foreach (HtmlNode node in nodes)
                         {
                             try
                             {
-                                int percentComplete = (int)((float)currentItemIndex / (float)totalItemsCount * 100);
-                                saveBackgroundWorker.ReportProgress(percentComplete);
+                                // Report progress
+                                percentComplete = (int)((float)currentItemIndex / (float)totalItemsCount * 100);
+                                backgroundWorker.ReportProgress(percentComplete);
 
+                                // Get href from node
                                 href = string.Format("https:{0}", node.Attributes.Where(x => x.Name == "href").Select(x => x.Value).First());
 
                                 if (encryptCb.Checked)
                                 {
+                                    // We are encrypting the downloaded files
+
+                                    // Get the directory to save to and the file name
                                     fullDirectory = getFullEncryptedDirectory(url, passwordTb.Text, SALT);
                                     Directory.CreateDirectory(fullDirectory);
                                     fileName = EncryptFileString(node.InnerText, passwordTb.Text, SALT);
 
+                                    // Make sure the filename doesn't already exist. Do what Windows does if it does
                                     int numFilesThatAlreadyHaveThisName = 0;
-                                    while (File.Exists(Path.Combine(fullDirectory, fileName))) {
+                                    while (File.Exists(Path.Combine(fullDirectory, fileName)))
+                                    {
                                         numFilesThatAlreadyHaveThisName++;
                                         fileName = EncryptFileString(Path.GetFileNameWithoutExtension(node.InnerText) +
                                             " (" + numFilesThatAlreadyHaveThisName.ToString() + ")" +
                                             Path.GetExtension(node.InnerText), passwordTb.Text, SALT);
                                     }
 
+                                    // Download a byte stream of the file, encrypt that stream, and write it to the path we determined earlier
                                     byte[] data = EncryptBytes(webClient.DownloadData(href), passwordTb.Text, SALT);
                                     using (MemoryStream mem = new MemoryStream(data))
                                     {
@@ -262,19 +298,24 @@ namespace _4chan_Thread_Saver
                                 }
                                 else
                                 {
+                                    // We are NOT encrypting the downloaded files
+
+                                    // Get the original directory and file name
                                     fullDirectory = getFullDirectory(url);
                                     Directory.CreateDirectory(fullDirectory);
                                     fileName = node.InnerText;
 
+                                    // Make sure the filename doesn't already exist. Do what Windows does if it does
                                     int numFilesThatAlreadyHaveThisName = 0;
                                     while (File.Exists(Path.Combine(fullDirectory, fileName)))
                                     {
                                         numFilesThatAlreadyHaveThisName++;
-                                        fileName = Path.GetFileNameWithoutExtension(node.InnerText) + 
-                                            " (" + numFilesThatAlreadyHaveThisName.ToString() + ")" + 
+                                        fileName = Path.GetFileNameWithoutExtension(node.InnerText) +
+                                            " (" + numFilesThatAlreadyHaveThisName.ToString() + ")" +
                                             Path.GetExtension(node.InnerText);
                                     }
 
+                                    // Download the file
                                     webClient.DownloadFile(href, Path.Combine(fullDirectory, fileName));
                                 }
                             }
@@ -295,7 +336,7 @@ namespace _4chan_Thread_Saver
                 }
                 else
                 {
-                    MessageBox.Show("Make sure the url is a valid 4chan thread URL, and that if you are requiring a password that it is at least one character.", 
+                    MessageBox.Show("Make sure the url is a valid 4chan thread URL, and that if you are requiring a password that it is at least one character.",
                         "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -305,31 +346,44 @@ namespace _4chan_Thread_Saver
             }
         }
 
+        /// <summary>
+        /// Main decryption function
+        /// </summary>
         private void decrypt()
         {
-            try {
+            try
+            {
+                // Decrypt the directory we will save to
                 string encryptedFolderName = directoryTb.Text.Split('\\')[directoryTb.Text.Split('\\').Length - 1];
                 string decryptedFolderName = DecryptFileString(encryptedFolderName, decryptPasswordTb.Text, SALT);
                 string decryptedDirectory = directoryTb.Text.Replace(encryptedFolderName, decryptedFolderName);
 
+                // Only continue if the user passed in a directory, not a file
                 if (string.IsNullOrEmpty(Path.GetExtension(decryptedFolderName)))
                 {
                     string[] files = Directory.GetFiles(directoryTb.Text);
                     Directory.CreateDirectory(decryptedDirectory);
 
+                    // Instantiate variables used to report progress
                     int currentItemIndex = 1;
                     int totalItemsCount = files.Count();
+                    int percentComplete;
+
                     foreach (string file in files)
                     {
                         try
                         {
-                            int percentComplete = (int)((float)currentItemIndex / (float)totalItemsCount * 100);
-                            saveBackgroundWorker.ReportProgress(percentComplete);
+                            // Report progress
+                            percentComplete = (int)((float)currentItemIndex / (float)totalItemsCount * 100);
+                            backgroundWorker.ReportProgress(percentComplete);
 
+                            // Read the stream of bytes from the file and decrypt it
                             var decryptedBytes = DecryptBytes(File.ReadAllBytes(file), decryptPasswordTb.Text, SALT);
                             var encryptedFileName = file.Split('\\')[file.Split('\\').Length - 1];
                             var decryptedFileName = DecryptFileString(encryptedFileName, decryptPasswordTb.Text, SALT);
 
+                            // Write the decrypted bytes to the decrypted directory and filename
+                            // The extension of the file is preserved in the filename, so we can avoid the encoding detection headache
                             var fs = new BinaryWriter(new FileStream(Path.Combine(decryptedDirectory, decryptedFileName), FileMode.Append, FileAccess.Write));
                             fs.Write(decryptedBytes);
                             fs.Close();
@@ -344,7 +398,8 @@ namespace _4chan_Thread_Saver
                 }
                 else
                 {
-                    MessageBox.Show("Encrypted directory leads to a file (" + decryptedFolderName + "), not a directory.", 
+                    // It's OK to show the filename they tried to decrypt because they have already supplied a correct password at this point
+                    MessageBox.Show("Encrypted directory leads to a file (" + decryptedFolderName + "), not a directory.",
                         "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -356,16 +411,30 @@ namespace _4chan_Thread_Saver
         #endregion
 
         #region Validation Functions
+        /// <summary>
+        /// Validates if the clipboard contains text that is a valid 4chan thread URL
+        /// </summary>
+        /// <returns>A bool indicating whether or not the clipboard contains text that is a valid 4chan thread URL</returns>
         private bool clipboardTextIsThreadURL()
         {
-            return Clipboard.ContainsText() && Regex.IsMatch(Clipboard.GetText(), URLREGEX);
+            return Clipboard.ContainsText() && URLIsValid(Clipboard.GetText());
         }
 
+        /// <summary>
+        /// Validates if the string passed in is a valid 4chan thread URL
+        /// </summary>
+        /// <param name="url">The string to check</param>
+        /// <returns>A bool indicating whether or not the string passed in is a valid 4chan thread URL</returns>
         private bool URLIsValid(string url)
         {
             return Regex.IsMatch(url, URLREGEX);
         }
 
+        /// <summary>
+        /// Validates if the HTML document passed in is an existant 4chan thread
+        /// </summary>
+        /// <param name="doc">The HTML document to check</param>
+        /// <returns>A bool indicating whether or not the HTML document passed in is an existant 4chan thread</returns>
         private bool threadIsFound(HtmlAgilityPack.HtmlDocument doc)
         {
             return doc.DocumentNode.SelectSingleNode(TITLEXPATH).InnerText != NOTFOUNDTITLE;
@@ -373,6 +442,12 @@ namespace _4chan_Thread_Saver
         #endregion
 
         #region Getter Functions
+        /// <summary>
+        /// Function to get the full directory to save images to, based on a 4chan thread url passed in.
+        ///     Format is: BASEDIRECTORY/board/thread name (thread number)
+        /// </summary>
+        /// <param name="url">The url to build the directory from</param>
+        /// <returns>A string containing the directory</returns>
         private string getFullDirectory(string url)
         {
             string[] urlParts = url.Replace(BASEURL, "").Split('/');
@@ -381,6 +456,14 @@ namespace _4chan_Thread_Saver
             return Path.Combine(Environment.ExpandEnvironmentVariables(BASEDIRECTORY), board, thread);
         }
 
+        /// <summary>
+        /// Function to get the full directory to save encrypted images to, based on a 4chan thread url passed in.
+        ///     Format is: BASEDIRECTORY/ENCRYPTED SUBDIRECTORY/encrypted thread name and number
+        /// </summary>
+        /// <param name="url">The url to build the directory from</param>
+        /// <param name="password">The password to use for encryption</param>
+        /// <param name="salt">The salt to use for encryption</param>
+        /// <returns>A string containing the directory</returns>
         private string getFullEncryptedDirectory(string url, string password, string salt)
         {
             string[] urlParts = url.Replace(BASEURL, "").Split('/');
@@ -389,17 +472,31 @@ namespace _4chan_Thread_Saver
             return Path.Combine(Environment.ExpandEnvironmentVariables(BASEDIRECTORY), board, thread);
         }
 
+        /// <summary>
+        /// Get an HTML document from a url passed in
+        /// </summary>
+        /// <param name="url">The url to get the document for</param>
+        /// <returns>The HTML document</returns>
         private HtmlAgilityPack.HtmlDocument getTheadDocument(string url)
         {
             HtmlWeb web = new HtmlWeb();
             return web.Load(url);
         }
 
+        /// <summary>
+        /// Gets a collection of image anchor nodes from a 4chan thread document
+        /// </summary>
+        /// <param name="doc">An HTML document of a 4chan thread</param>
+        /// <returns>An collection of HTML nodes of the image anchors</returns>
         private HtmlNodeCollection getImageNodes(HtmlAgilityPack.HtmlDocument doc)
         {
             return doc.DocumentNode.SelectNodes(IMAGEANCHORXPATH);
         }
 
+        /// <summary>
+        /// Populates the global variables from the config file
+        ///     It is public so that the Options window can call this when it closes
+        /// </summary>
         public void getGlobalVarsFromConfig()
         {
             BASEDIRECTORY = ConfigurationManager.AppSettings.Get("baseDirectory");
@@ -414,6 +511,14 @@ namespace _4chan_Thread_Saver
         #endregion
 
         #region Encryption Functions
+        /// <summary>
+        /// Encrypt an array of bytes
+        /// Thanks to the top answer on http://stackoverflow.com/questions/4438691/simple-encryption-decryption-method-for-encrypting-an-image-file
+        /// </summary>
+        /// <param name="inputBytes">The bytes to encrypt</param>
+        /// <param name="passPhrase">The password to use for encryption</param>
+        /// <param name="saltValue">The salt to use for decryption</param>
+        /// <returns>The encrypted bytes</returns>
         public byte[] EncryptBytes(byte[] inputBytes, string passPhrase, string saltValue)
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
@@ -437,6 +542,14 @@ namespace _4chan_Thread_Saver
             return CipherBytes;
         }
 
+        /// <summary>
+        /// Decrypt an array of bytes
+        /// Thanks to the top answer on http://stackoverflow.com/questions/4438691/simple-encryption-decryption-method-for-encrypting-an-image-file
+        /// </summary>
+        /// <param name="encryptedBytes">The encrypted bytes</param>
+        /// <param name="passPhrase">The password to use for encryption</param>
+        /// <param name="saltValue">The salt to use for decryption</param>
+        /// <returns>The decrypted bytes</returns>
         public byte[] DecryptBytes(byte[] encryptedBytes, string passPhrase, string saltValue)
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
@@ -460,8 +573,17 @@ namespace _4chan_Thread_Saver
             return plainBytes;
         }
 
+        /// <summary>
+        /// Encrypt a string suitable for use in a directory or file name
+        /// </summary>
+        /// <param name="inputString">The string to encrypt</param>
+        /// <param name="passPhrase">The password to use for encryption</param>
+        /// <param name="saltValue">The salt to use for decryption</param>
+        /// <returns>The encrypted string</returns>
         public string EncryptFileString(string inputString, string passPhrase, string saltValue)
         {
+            // Use UTF8 to encrypt (instead of ASCII) because it only uses valid characters, 
+            //     except for "/", which we replace with "-", which isn't used by UTF8 encryption, but is a valid file character
             var byteArray = Encoding.UTF8.GetBytes(inputString);
             var encryptedBytes = EncryptBytes(byteArray, passPhrase, saltValue);
             var encryptedString = Convert.ToBase64String(encryptedBytes).Replace("/", "-");
@@ -469,8 +591,16 @@ namespace _4chan_Thread_Saver
             return encryptedString;
         }
 
+        /// <summary>
+        /// Decrypt a string suitable for use in a directory or file name
+        /// </summary>
+        /// <param name="encryptedString">The string to decrypt</param>
+        /// <param name="passPhrase">The password to use for encryption</param>
+        /// <param name="saltValue">The salt to use for decryption</param>
+        /// <returns>The decrypted string</returns>
         public string DecryptFileString(string encryptedString, string passPhrase, string saltValue)
         {
+            // Replace back that "/" which we had to get rid of
             var byteArray = Convert.FromBase64String(encryptedString.Replace("-", "/"));
             var decryptedBytes = DecryptBytes(byteArray, passPhrase, saltValue);
             var decryptedString = Encoding.UTF8.GetString(decryptedBytes);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace _4chan_Thread_Saver
@@ -55,35 +54,45 @@ namespace _4chan_Thread_Saver
             {
                 Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
+                // Loop through each setting...
                 foreach (string valueName in DefaultValues.valueNames)
                 {
+                    // And if it isn't present (likely this is the first run of the app)...
                     if (string.IsNullOrWhiteSpace(configuration.AppSettings.Settings[valueName].Value))
                     {
+                        // Set it to the default
                         configuration.AppSettings.Settings[valueName].Value = DefaultValues.getValue(valueName);
                     }
                 }
 
+                // Generate a new encryption salt if none is set (likely this is the first run of the app)...
                 if (string.IsNullOrWhiteSpace(configuration.AppSettings.Settings["salt"].Value))
                 {
                     configuration.AppSettings.Settings["salt"].Value = generateSalt();
-                    configuration.Save();
-                    ConfigurationManager.RefreshSection("appSettings");
                 }
 
                 configuration.Save();
                 ConfigurationManager.RefreshSection("appSettings");
 
+                // Launch main window
                 Application.Run(new MainWindow());
             }
             catch (Exception ex)
             {
+                // There was an error parsing the config file
+                // TODO: Create a raw, new config file
                 MessageBox.Show("Invalid config file.\nAsk Daniel for a new one.\n\nTechnical Error:\n" + ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        /// <summary>
+        /// Method to generate a secure, 128 character long encryption salt
+        /// </summary>
+        /// <returns>A 128 character long string suitable to be used as an encryption salt</returns>
         public static string generateSalt()
         {
             byte[] linkBytes = new byte[96];
+            // Use the RNGCryptoServiceProvider object because the normal Random namespace isn't good enough for security applications
             var rngCrypto = new RNGCryptoServiceProvider();
             rngCrypto.GetBytes(linkBytes);
             var text128 = Convert.ToBase64String(linkBytes);

@@ -45,8 +45,7 @@
             this.directoryTb = new System.Windows.Forms.TextBox();
             this.directoryLbl = new System.Windows.Forms.Label();
             this.optionsBtn = new System.Windows.Forms.LinkLabel();
-            this.saveBackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.decryptBackgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.tabControl1.SuspendLayout();
             this.saveTab.SuspendLayout();
             this.decryptTab.SuspendLayout();
@@ -64,7 +63,7 @@
             // urlTb
             // 
             this.urlTb.AllowDrop = true;
-            this.urlTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.urlTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.urlTb.Location = new System.Drawing.Point(6, 25);
             this.urlTb.Name = "urlTb";
@@ -86,7 +85,7 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.progressBar1.Location = new System.Drawing.Point(125, 151);
             this.progressBar1.Name = "progressBar1";
@@ -117,7 +116,7 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.saveTab);
             this.tabControl1.Controls.Add(this.decryptTab);
@@ -207,7 +206,7 @@
             // directoryTb
             // 
             this.directoryTb.AllowDrop = true;
-            this.directoryTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.directoryTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.directoryTb.Location = new System.Drawing.Point(6, 25);
             this.directoryTb.Name = "directoryTb";
@@ -236,13 +235,9 @@
             this.optionsBtn.VisitedLinkColor = System.Drawing.Color.Blue;
             this.optionsBtn.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.optionsBtn_LinkClicked);
             // 
-            // saveBackgroundWorker
+            // backgroundWorker
             // 
-            this.saveBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.saveBackgroundWorker_DoWork);
-            // 
-            // decryptBackgroundWorker
-            // 
-            this.decryptBackgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.decryptBackgroundWorker_DoWork);
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
             // 
             // MainWindow
             // 
@@ -250,7 +245,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(238)))));
-            this.ClientSize = new System.Drawing.Size(580, 181);
+            this.ClientSize = new System.Drawing.Size(580, 182);
             this.Controls.Add(this.optionsBtn);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.progressBar1);
@@ -292,8 +287,6 @@
         private System.Windows.Forms.LinkLabel openSavedFolderBtn;
         private System.Windows.Forms.LinkLabel openEncFolderBtn;
         private System.Windows.Forms.LinkLabel optionsBtn;
-        private System.ComponentModel.BackgroundWorker saveBackgroundWorker;
-        private System.ComponentModel.BackgroundWorker decryptBackgroundWorker;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
     }
 }
-
