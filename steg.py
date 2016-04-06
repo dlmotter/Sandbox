@@ -2,9 +2,10 @@
 # Steganography sandbox
 # https://en.wikipedia.org/wiki/Steganography#Digital_messages
 
-# Essentially, take two 256 bit images, make one 252 bit (the "super" or "hider" image), and one 4 bit (the "sub" or "hidden" image)
-# Then, hide the 4 bit one in the newly opened up space in the 252 bit one.
-# Since 252 and 256 are very close, humans cannot tell that something is fishy.
+# Essentially, take a 256 bit image (the super/hider image) and give up control of the least two significant bits of the RGB value of each pixel
+# Give those two 2 bits to a 4 bit image (the sub/hidden image) that is embedded in the super image
+# To retrieve the hidden image, simply extract and save that 4 bit image
+# Obviously if the 4 bit image was converted down from 256 bits, there is quality loss
 
 from PIL import Image
 
