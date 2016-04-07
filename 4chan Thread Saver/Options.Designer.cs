@@ -53,6 +53,7 @@
             this.fullBaseDirectoryValueLbl = new System.Windows.Forms.Label();
             this.fullBaseDirectoryLbl = new System.Windows.Forms.Label();
             this.advancedTab = new System.Windows.Forms.TabPage();
+            this.showSaltBtn = new System.Windows.Forms.LinkLabel();
             this.regenerateSaltLbl = new System.Windows.Forms.LinkLabel();
             this.optionsTabs.SuspendLayout();
             this.basicTab.SuspendLayout();
@@ -210,6 +211,7 @@
             // 
             this.submitBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.submitBtn.AutoSize = true;
+            this.submitBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.submitBtn.Location = new System.Drawing.Point(9, 251);
             this.submitBtn.Name = "submitBtn";
             this.submitBtn.Size = new System.Drawing.Size(46, 15);
@@ -223,6 +225,7 @@
             // 
             this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cancelBtn.AutoSize = true;
+            this.cancelBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.cancelBtn.Location = new System.Drawing.Point(61, 251);
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(46, 15);
@@ -236,6 +239,7 @@
             // 
             this.defaultBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.defaultBtn.AutoSize = true;
+            this.defaultBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.defaultBtn.Location = new System.Drawing.Point(472, 251);
             this.defaultBtn.Name = "defaultBtn";
             this.defaultBtn.Size = new System.Drawing.Size(100, 15);
@@ -303,6 +307,7 @@
             // advancedTab
             // 
             this.advancedTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(224)))), ((int)(((byte)(214)))));
+            this.advancedTab.Controls.Add(this.showSaltBtn);
             this.advancedTab.Controls.Add(this.regenerateSaltLbl);
             this.advancedTab.Controls.Add(this.notFoundLbl);
             this.advancedTab.Controls.Add(this.urlRegExTb);
@@ -319,9 +324,23 @@
             this.advancedTab.TabIndex = 1;
             this.advancedTab.Text = "Advanced";
             // 
+            // showSaltBtn
+            // 
+            this.showSaltBtn.AutoSize = true;
+            this.showSaltBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
+            this.showSaltBtn.Location = new System.Drawing.Point(111, 175);
+            this.showSaltBtn.Name = "showSaltBtn";
+            this.showSaltBtn.Size = new System.Drawing.Size(62, 15);
+            this.showSaltBtn.TabIndex = 10;
+            this.showSaltBtn.TabStop = true;
+            this.showSaltBtn.Text = "Show Salt";
+            this.showSaltBtn.VisitedLinkColor = System.Drawing.Color.Blue;
+            this.showSaltBtn.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.showSaltBtn_LinkClicked);
+            // 
             // regenerateSaltLbl
             // 
             this.regenerateSaltLbl.AutoSize = true;
+            this.regenerateSaltLbl.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.regenerateSaltLbl.Location = new System.Drawing.Point(9, 175);
             this.regenerateSaltLbl.Name = "regenerateSaltLbl";
             this.regenerateSaltLbl.Size = new System.Drawing.Size(96, 15);
@@ -388,5 +407,6 @@
         private System.Windows.Forms.Label fullBaseDirectoryLbl;
         private System.Windows.Forms.TabPage advancedTab;
         private System.Windows.Forms.LinkLabel regenerateSaltLbl;
+        private System.Windows.Forms.LinkLabel showSaltBtn;
     }
 }

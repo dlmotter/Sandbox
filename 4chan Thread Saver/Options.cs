@@ -72,6 +72,11 @@ namespace _4chan_Thread_Saver
                 setNewSalt();
             }
         }
+
+        private void showSaltBtn_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MessageBox.Show(string.Format("Your encryption salt is:\n{0}", ConfigurationManager.AppSettings.Get("salt")), "Encryption Salt", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
         #endregion
 
         #region Getter/Setter Functions

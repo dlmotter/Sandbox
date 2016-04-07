@@ -199,7 +199,8 @@ namespace _4chan_Thread_Saver
                 goBtn.Text = "Decrypting Images";
             }
 
-            goBtn.Enabled = false;
+            goBtn.LinkBehavior = LinkBehavior.NeverUnderline;
+            goBtn.Links[0].Enabled = false;
             progressBar1.Show();
             // Start the background worker, passing in the process we want to run
             backgroundWorker.RunWorkerAsync(arg);
@@ -213,7 +214,8 @@ namespace _4chan_Thread_Saver
             // Reset GUI elements
             progressBar1.Hide();
             progressBar1.Value = 0;
-            goBtn.Enabled = true;
+            goBtn.Links[0].Enabled = true;
+            goBtn.LinkBehavior = LinkBehavior.SystemDefault;
 
             if (tabControl1.SelectedTab.Name == "saveTab")
             {
@@ -336,7 +338,7 @@ namespace _4chan_Thread_Saver
                 }
                 else
                 {
-                    MessageBox.Show("Make sure the url is a valid 4chan thread URL, and that if you are requiring a password that it is at least one character.",
+                    MessageBox.Show("Make sure the URL is a valid 4chan thread URL, and that if you are requiring a password that it is at least one character.",
                         "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

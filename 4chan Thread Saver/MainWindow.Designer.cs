@@ -73,7 +73,7 @@
             // goBtn
             // 
             this.goBtn.AutoSize = true;
-            this.goBtn.DisabledLinkColor = System.Drawing.Color.Blue;
+            this.goBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.goBtn.Location = new System.Drawing.Point(9, 151);
             this.goBtn.Name = "goBtn";
             this.goBtn.Size = new System.Drawing.Size(79, 15);
@@ -146,7 +146,7 @@
             // 
             this.openSavedFolderBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.openSavedFolderBtn.AutoSize = true;
-            this.openSavedFolderBtn.DisabledLinkColor = System.Drawing.Color.Blue;
+            this.openSavedFolderBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.openSavedFolderBtn.Location = new System.Drawing.Point(379, 80);
             this.openSavedFolderBtn.Name = "openSavedFolderBtn";
             this.openSavedFolderBtn.Size = new System.Drawing.Size(161, 15);
@@ -176,7 +176,7 @@
             // 
             this.openEncFolderBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.openEncFolderBtn.AutoSize = true;
-            this.openEncFolderBtn.DisabledLinkColor = System.Drawing.Color.Blue;
+            this.openEncFolderBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.openEncFolderBtn.Location = new System.Drawing.Point(359, 80);
             this.openEncFolderBtn.Name = "openEncFolderBtn";
             this.openEncFolderBtn.Size = new System.Drawing.Size(181, 15);
@@ -219,13 +219,14 @@
             this.directoryLbl.Name = "directoryLbl";
             this.directoryLbl.Size = new System.Drawing.Size(232, 19);
             this.directoryLbl.TabIndex = 0;
-            this.directoryLbl.Text = "Directory (drag and drop supported)";
+            this.directoryLbl.Text = "Directory";
             this.directoryLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // optionsBtn
             // 
             this.optionsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.optionsBtn.AutoSize = true;
+            this.optionsBtn.DisabledLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(153)))), ((int)(((byte)(34)))));
             this.optionsBtn.Location = new System.Drawing.Point(518, 151);
             this.optionsBtn.Name = "optionsBtn";
             this.optionsBtn.Size = new System.Drawing.Size(50, 15);
