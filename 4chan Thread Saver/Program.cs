@@ -82,8 +82,8 @@ namespace _4chan_Thread_Saver
             catch (Exception ex)
             {
                 // There was an error parsing the config file
-                var response = MessageBox.Show("Invalid or missing configuration file detected.\nWould you like a new one to be generated?", "Invalid Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (response.ToString() == "Yes")
+                var response = MessageBox.Show("Invalid or missing configuration file detected.\nWould you like a new one to be generated?", "Invalid Configuration", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (response.ToString() == "OK")
                 {
                     try
                     {
@@ -94,6 +94,10 @@ namespace _4chan_Thread_Saver
                     {
                         MessageBox.Show("Unable to create a new configuration file.\n\nTechnical Error:\n" + ex2.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
+                }
+                else
+                {
+                    Application.Exit();
                 }
             }
         }
