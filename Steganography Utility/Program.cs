@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Steganography_Utility
@@ -18,19 +19,19 @@ namespace Steganography_Utility
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
 
-
-            // Test encoding with super array non-divisible by four, and sub array not filling space
-            var encodedList = encodeByteList(
-                new List<byte> { 255, 255, 255, 255, 85, 85, 85, 85, 170 },
-                new List<byte> { 228 } 
+            saveEncodedImage(
+                @"C:\GitHubRepos\Sandbox\Steganography Utility\hider.bmp", 
+                @"C:\GitHubRepos\Sandbox\Steganography Utility\hidden.bmp", 
+                @"C:\GitHubRepos\Sandbox\Steganography Utility\encoded.bmp"
             );
 
-            // The decoded list will have extraneous bytes at the end if it doesn't fill up the super list.
-            // This is OK, because length data will be stored in the header, so we know how many decoded bits to take.
-            var decodedList = decodeByteList(encodedList);
+            saveDecodedFile(
+                @"C:\GitHubRepos\Sandbox\Steganography Utility\encoded.bmp",
+                @"C:\GitHubRepos\Sandbox\Steganography Utility\decoded"
+            );
         }
 
-        static public List<byte> intToBytes(int integer, int numBytes)
+        static private List<byte> intToBytes(int integer, int numBytes)
         {
             List<byte> retVal = new List<byte>();
             string bits = Convert.ToString(integer, 2);
@@ -49,7 +50,7 @@ namespace Steganography_Utility
             return retVal;
         }
 
-        static public int bytesToInt(List<byte> array)
+        static private int bytesToInt(List<byte> array)
         {
             string bits = string.Empty;
             foreach (byte b in array)
@@ -59,7 +60,7 @@ namespace Steganography_Utility
             return Convert.ToInt32(bits, 2);
         }
 
-        static public List<byte> encodeByteList(List<byte> superList, List<byte> subList) {
+        static private List<byte> encodeByteList(List<byte> superList, List<byte> subList) {
             List<byte> resultList = new List<byte>();
 
             // Make sure that the sublist is at most one fourth the length of the super list
@@ -107,7 +108,7 @@ namespace Steganography_Utility
             return null;
         }
         
-        static public List<byte> decodeByteList(List<byte> encodedByteList)
+        static private List<byte> decodeByteList(List<byte> encodedByteList)
         {
             List<byte> decodedByteList = new List<byte>();
 
@@ -131,5 +132,106 @@ namespace Steganography_Utility
 
             return decodedByteList;
         }  
+
+        static private List<byte> bitmapToBytes(Bitmap image)
+        {
+            List<byte> retVal = new List<byte>();
+
+            for (int y = 0; y < image.Height; y++)
+            {
+                for (int x = 0; x < image.Width; x++)
+                {
+                    Color pixelColor = image.GetPixel(x, y);
+                    retVal.Add(pixelColor.R);
+                    retVal.Add(pixelColor.G);
+                    retVal.Add(pixelColor.B);
+                }
+            }
+
+            return retVal;
+        }
+
+        static private Bitmap bytesToBitmap(List<byte> bytes, int width, int height)
+        {
+            Bitmap retVal = new Bitmap(width, height, PixelFormat.Format32bppRgb);
+
+            int byteIndex = 0;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int red = bytes[byteIndex];
+                    int green = bytes[byteIndex + 1];
+                    int blue = bytes[byteIndex + 2];
+
+                    byteIndex += 3;
+
+                    retVal.SetPixel(x, y, Color.FromArgb(red, green, blue));
+                }
+            }
+
+            return retVal;
+        }
+
+        static public void saveEncodedImage(string superImagePath, string subImagePath, string resultImagePath)
+        {
+            try {
+                Bitmap superImage = new Bitmap(superImagePath);
+                Bitmap subImage = new Bitmap(subImagePath);
+
+                var superBytes = bitmapToBytes(superImage);
+
+                var subBytes = new List<byte>();
+                subBytes.Add(Convert.ToByte(0));                   // 0 as first secret byte indicates a hidden image (as opposed to text, TBI)
+                subBytes.AddRange(intToBytes(subImage.Width, 4));  // Next 4 secret bytes tell hidden image width
+                subBytes.AddRange(intToBytes(subImage.Height, 4)); // Next 4 secret bytes tell hidden image height
+                subBytes.AddRange(bitmapToBytes(subImage));        // The rest of the secret bytes are the hidden image RGB data
+
+                var encodedBytes = encodeByteList(superBytes, subBytes);
+
+                if (encodedBytes == null)
+                {
+                    throw new Exception("Container image not large enough to hide hidden image");
+                }
+
+                Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
+
+                resultImage.Save(resultImagePath);
+            }
+            catch (Exception ex)  
+            {
+
+            }
+        }
+
+        static public void saveDecodedFile(string encodedImagePath, string resultImagePath)
+        {
+            Bitmap encodedImage = new Bitmap(encodedImagePath);
+            var encodedBytes = bitmapToBytes(encodedImage);
+            var decodedBytes = decodeByteList(encodedBytes);
+            string fileFormat = string.Empty;
+
+            if (decodedBytes[0] == 0)
+            {
+                // Look for encoded image
+                fileFormat = ".bmp";
+
+                // Get width and height from header
+                var width = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
+                var height = bytesToInt(decodedBytes.Skip(5).Take(4).ToList());
+
+                // Remove header
+                decodedBytes.RemoveRange(0, 9);
+
+                // Save bitmap
+                Bitmap decodedImage = bytesToBitmap(decodedBytes, width, height);
+                decodedImage.Save(resultImagePath + fileFormat);
+            }
+            else
+            {
+                // Look for encoded text, TBI
+                fileFormat = ".txt";
+            }
+        }
     }
 }
