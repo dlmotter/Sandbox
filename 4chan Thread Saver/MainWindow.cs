@@ -147,14 +147,8 @@ namespace _4chan_Thread_Saver
         {
             string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            string s = "";
-
-            // Parse the file list from the FileDrop object and set the textbox text
-            foreach (string File in FileList)
-            {
-                s = s + " " + File;
-            }
-            directoryTb.Text = s;
+            // If user dropped multiple files, only take the first one
+            directoryTb.Text = FileList[0];
         }
         #endregion
 

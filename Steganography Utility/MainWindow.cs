@@ -40,7 +40,6 @@ namespace Steganography_Utility
         #endregion
 
         #region Drag/drop handlers
-
         private void GenericTextBox_DragEnter(object sender, DragEventArgs e)
         {
             // Change the mouse icon depending if the user is trying to drop something legit
@@ -57,19 +56,11 @@ namespace Steganography_Utility
         private void GenericTextBox_DragDrop(object sender, DragEventArgs e)
         {
             string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-            string s = "";
-
-            // Parse the file list from the FileDrop object and set the textbox text
-            foreach (string File in FileList)
-            {
-                s = s + " " + File;
-            }
-
             TextBox typedSender = (TextBox)sender;
-            typedSender.Text = s;
-        }
 
+            // If user dropped multiple files, only take the first one
+            typedSender.Text = FileList[0];
+        }
         #endregion
 
         #region Async operations
