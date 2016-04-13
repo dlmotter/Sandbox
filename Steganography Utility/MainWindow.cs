@@ -37,6 +37,28 @@ namespace Steganography_Utility
         {
             startRun();
         }
+
+        private void GenericFileUpload_Click(object sender, EventArgs e)
+        {
+            openFileDialog.ShowDialog();
+
+            Button buttonSender = (Button)sender;
+            // Button and textbox must be named <name>Btn and <name>Tb, respectively
+            TextBox textboxSender = (TextBox)Controls.Find(buttonSender.Name.Replace("Btn", "Tb"), true)[0];
+
+            textboxSender.Text = openFileDialog.FileName;
+        }
+
+        private void GenericFileSave_Click(object sender, EventArgs e)
+        {
+            saveFileDialog.ShowDialog();
+
+            Button buttonSender = (Button)sender;
+            // Button and textbox must be named <name>Btn and <name>Tb, respectively
+            TextBox textboxSender = (TextBox)Controls.Find(buttonSender.Name.Replace("Btn", "Tb"), true)[0];
+
+            textboxSender.Text = saveFileDialog.FileName;
+        }
         #endregion
 
         #region Drag/drop handlers
@@ -66,14 +88,20 @@ namespace Steganography_Utility
         #region Async operations
         private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            // Since there's only one background worker, check to see which function we are supposed to do
-            if ((string)e.Argument == "encode")
-            {
-                Program.saveEncodedImage(containerImageTb.Text, hiddenImageTb.Text, resultImageTb.Text);
+            try {
+                // Since there's only one background worker, check to see which function we are supposed to do
+                if ((string)e.Argument == "encode")
+                {
+                    Program.saveEncodedImage(containerImageTb.Text, hiddenImageTb.Text, resultImageTb.Text);
+                }
+                else
+                {
+                    Program.saveDecodedFile(encodedImageTb.Text, decodedImageTb.Text);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Program.saveDecodedFile(encodedImageTb.Text, decodedImageTb.Text);
+                MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

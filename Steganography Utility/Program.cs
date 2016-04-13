@@ -30,25 +30,32 @@ namespace Steganography_Utility
         /// <para>  So, this function would return { 7, 128 }</para>
         /// </summary>
         /// <param name="integer">The integer to convert</param>
-        /// <param name="numBytes">The number of bytes to turn it into</param>
+        /// <param name="numBytes">The number of bytes to turn it into (maximum 8 since we used Int64)</param>
         /// <returns>The list of bytes representing the integer</returns>
         static private List<byte> intToBytes(int integer, int numBytes)
         {
-            List<byte> retVal = new List<byte>();
-            string bits = Convert.ToString(integer, 2);
-            if (bits.Length <= (8 * numBytes))
+            if (numBytes > 0 && numBytes <= 8)
             {
-                string paddedBits = bits.PadLeft((8 * numBytes), '0');
-                for (int i = 0; i < (8 * numBytes); i += 8)
+                List<byte> retVal = new List<byte>();
+                string bits = Convert.ToString(integer, 2);
+                if (bits.Length <= (8 * numBytes))
                 {
-                    retVal.Add((byte)Convert.ToInt32(paddedBits.Substring(i, 8), 2));
+                    string paddedBits = bits.PadLeft((8 * numBytes), '0');
+                    for (int i = 0; i < (8 * numBytes); i += 8)
+                    {
+                        retVal.Add((byte)Convert.ToInt64(paddedBits.Substring(i, 8), 2));
+                    }
                 }
+                else
+                {
+                    throw new Exception("Not enough bytes to contain the integer provided");
+                }
+                return retVal;
             }
             else
             {
-                return null;
+                throw new Exception("The number of bytes must be greater than 0 and less than or equal to 8");
             }
-            return retVal;
         }
 
         /// <summary>
@@ -183,7 +190,10 @@ namespace Steganography_Utility
 
                 return resultList.Concat(extraneousBytes).ToList();
             }
-            return null;
+            else
+            {
+                throw new Exception("The container image is not large enough to contain the secret data.");
+            }
         }
 
         /// <summary>
@@ -228,42 +238,31 @@ namespace Steganography_Utility
         /// <param name="resultImagePath">The filepath to save the resultant, encoded image</param>
         static public void saveEncodedImage(string superImagePath, string subImagePath, string resultImagePath)
         {
-            try {
-                // The super and sub images don't necessarily have to be .bmp file format.
-                // You can pass a file of any format supported by the Image class to the Bitmap constructor
-                Bitmap superImage = new Bitmap(superImagePath);
-                Bitmap subImage = new Bitmap(subImagePath);
+            // The super and sub images don't necessarily have to be .bmp file format.
+            // You can pass a file of any format supported by the Image class to the Bitmap constructor
+            Bitmap superImage = new Bitmap(superImagePath);
+            Bitmap subImage = new Bitmap(subImagePath);
 
-                var superBytes = bitmapToBytes(superImage);
+            var superBytes = bitmapToBytes(superImage);
 
-                var subBytes = new List<byte>();
-                subBytes.Add(Convert.ToByte(0));                   // 0 as first secret byte indicates a hidden image (as opposed to text, TBI)
-                subBytes.AddRange(intToBytes(subImage.Width, 4));  // Next 4 secret bytes tell hidden image width
-                subBytes.AddRange(intToBytes(subImage.Height, 4)); // Next 4 secret bytes tell hidden image height
-                subBytes.AddRange(bitmapToBytes(subImage));        // The rest of the secret bytes are the hidden image RGB data
+            var subBytes = new List<byte>();
+            subBytes.Add(Convert.ToByte(0));                   // 0 as first secret byte indicates a hidden image (as opposed to text, TBI)
+            subBytes.AddRange(intToBytes(subImage.Width, 4));  // Next 4 secret bytes tell hidden image width
+            subBytes.AddRange(intToBytes(subImage.Height, 4)); // Next 4 secret bytes tell hidden image height
+            subBytes.AddRange(bitmapToBytes(subImage));        // The rest of the secret bytes are the hidden image RGB data
 
-                var encodedBytes = encodeByteList(superBytes, subBytes);
+            var encodedBytes = encodeByteList(superBytes, subBytes);
 
-                if (encodedBytes == null)
-                {
-                    throw new Exception("Container image not large enough to hide hidden image");
-                }
+            Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
 
-                Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
-
-                using (MemoryStream memory = new MemoryStream())
-                {
-                    using (FileStream fs = new FileStream(resultImagePath, FileMode.Create, FileAccess.ReadWrite))
-                    {
-                        resultImage.Save(memory, getImageFormat(fs.Name));
-                        byte[] bytes = memory.ToArray();
-                        fs.Write(bytes, 0, bytes.Length);
-                    }
-                }
-            }
-            catch (Exception ex)  
+            using (MemoryStream memory = new MemoryStream())
             {
-                MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                using (FileStream fs = new FileStream(resultImagePath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    resultImage.Save(memory, getImageFormat(fs.Name));
+                    byte[] bytes = memory.ToArray();
+                    fs.Write(bytes, 0, bytes.Length);
+                }
             }
         }
 
@@ -300,10 +299,14 @@ namespace Steganography_Utility
                     }
                 }
             }
-            else
+            else if (decodedBytes[0] == 1)
             {
                 // Look for encoded text, TBI
-
+                throw new Exception("Text decoding is not implemented yet");
+            }
+            else
+            {
+                throw new Exception("Did not detect encoded data in the file");
             }
         }
 
@@ -332,7 +335,7 @@ namespace Steganography_Utility
             }
             else
             {
-                return ImageFormat.Bmp;
+                throw new Exception("File has no extension");
             }
         }
 

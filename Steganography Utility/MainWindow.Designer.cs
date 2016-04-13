@@ -58,6 +58,11 @@
             this.decodeTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.DefaultExt = "bmp";
+            this.saveFileDialog.Filter = "Bitmap|*.bmp|PNG|*.png|JPEG|*.jpg,*.jpeg";
+            // 
             // MainTabControl
             // 
             this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -110,6 +115,7 @@
             this.resultImageBtn.TabIndex = 10;
             this.resultImageBtn.Text = "Choose...";
             this.resultImageBtn.UseVisualStyleBackColor = true;
+            this.resultImageBtn.Click += new System.EventHandler(this.GenericFileSave_Click);
             // 
             // resultImageLbl
             // 
@@ -147,6 +153,7 @@
             this.containerImageBtn.TabIndex = 6;
             this.containerImageBtn.Text = "Choose...";
             this.containerImageBtn.UseVisualStyleBackColor = true;
+            this.containerImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
             // 
             // hiddenTextTb
             // 
@@ -168,6 +175,7 @@
             this.hiddenImageBtn.TabIndex = 3;
             this.hiddenImageBtn.Text = "Choose...";
             this.hiddenImageBtn.UseVisualStyleBackColor = true;
+            this.hiddenImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
             // 
             // hiddenImageTb
             // 
@@ -236,6 +244,7 @@
             this.decodedImageBtn.TabIndex = 10;
             this.decodedImageBtn.Text = "Choose...";
             this.decodedImageBtn.UseVisualStyleBackColor = true;
+            this.decodedImageBtn.Click += new System.EventHandler(this.GenericFileSave_Click);
             // 
             // decodedImageLbl
             // 
@@ -265,6 +274,7 @@
             this.encodedImageBtn.TabIndex = 7;
             this.encodedImageBtn.Text = "Choose...";
             this.encodedImageBtn.UseVisualStyleBackColor = true;
+            this.encodedImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
             // 
             // encodedImageLbl
             // 
