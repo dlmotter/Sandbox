@@ -32,6 +32,9 @@
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.MainTabControl = new System.Windows.Forms.TabControl();
             this.encodeTabPage = new System.Windows.Forms.TabPage();
+            this.resultImageTb = new System.Windows.Forms.TextBox();
+            this.resultImageBtn = new System.Windows.Forms.Button();
+            this.resultImageLbl = new System.Windows.Forms.Label();
             this.containerLbl = new System.Windows.Forms.Label();
             this.containerImageTb = new System.Windows.Forms.TextBox();
             this.containerImageBtn = new System.Windows.Forms.Button();
@@ -50,9 +53,6 @@
             this.goBtn = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.resultImageLbl = new System.Windows.Forms.Label();
-            this.resultImageBtn = new System.Windows.Forms.Button();
-            this.resultImageTb = new System.Windows.Forms.TextBox();
             this.MainTabControl.SuspendLayout();
             this.encodeTabPage.SuspendLayout();
             this.decodeTabPage.SuspendLayout();
@@ -92,6 +92,34 @@
             this.encodeTabPage.Text = "Encode";
             this.encodeTabPage.UseVisualStyleBackColor = true;
             // 
+            // resultImageTb
+            // 
+            this.resultImageTb.AllowDrop = true;
+            this.resultImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.resultImageTb.Location = new System.Drawing.Point(96, 65);
+            this.resultImageTb.Name = "resultImageTb";
+            this.resultImageTb.Size = new System.Drawing.Size(383, 20);
+            this.resultImageTb.TabIndex = 11;
+            // 
+            // resultImageBtn
+            // 
+            this.resultImageBtn.Location = new System.Drawing.Point(15, 63);
+            this.resultImageBtn.Name = "resultImageBtn";
+            this.resultImageBtn.Size = new System.Drawing.Size(75, 23);
+            this.resultImageBtn.TabIndex = 10;
+            this.resultImageBtn.Text = "Choose...";
+            this.resultImageBtn.UseVisualStyleBackColor = true;
+            // 
+            // resultImageLbl
+            // 
+            this.resultImageLbl.AutoSize = true;
+            this.resultImageLbl.Location = new System.Drawing.Point(6, 47);
+            this.resultImageLbl.Name = "resultImageLbl";
+            this.resultImageLbl.Size = new System.Drawing.Size(69, 13);
+            this.resultImageLbl.TabIndex = 9;
+            this.resultImageLbl.Text = "Result Image";
+            // 
             // containerLbl
             // 
             this.containerLbl.AutoSize = true;
@@ -103,6 +131,7 @@
             // 
             // containerImageTb
             // 
+            this.containerImageTb.AllowDrop = true;
             this.containerImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.containerImageTb.Location = new System.Drawing.Point(96, 23);
@@ -142,6 +171,7 @@
             // 
             // hiddenImageTb
             // 
+            this.hiddenImageTb.AllowDrop = true;
             this.hiddenImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hiddenImageTb.Location = new System.Drawing.Point(96, 118);
@@ -190,6 +220,7 @@
             // 
             // decodedImageTb
             // 
+            this.decodedImageTb.AllowDrop = true;
             this.decodedImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.decodedImageTb.Location = new System.Drawing.Point(96, 65);
@@ -218,6 +249,7 @@
             // 
             // encodedImageTb
             // 
+            this.encodedImageTb.AllowDrop = true;
             this.encodedImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.encodedImageTb.Location = new System.Drawing.Point(96, 23);
@@ -269,35 +301,9 @@
             // 
             this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
             // 
-            // resultImageLbl
-            // 
-            this.resultImageLbl.AutoSize = true;
-            this.resultImageLbl.Location = new System.Drawing.Point(6, 47);
-            this.resultImageLbl.Name = "resultImageLbl";
-            this.resultImageLbl.Size = new System.Drawing.Size(69, 13);
-            this.resultImageLbl.TabIndex = 9;
-            this.resultImageLbl.Text = "Result Image";
-            // 
-            // resultImageBtn
-            // 
-            this.resultImageBtn.Location = new System.Drawing.Point(15, 63);
-            this.resultImageBtn.Name = "resultImageBtn";
-            this.resultImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.resultImageBtn.TabIndex = 10;
-            this.resultImageBtn.Text = "Choose...";
-            this.resultImageBtn.UseVisualStyleBackColor = true;
-            // 
-            // resultImageTb
-            // 
-            this.resultImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.resultImageTb.Location = new System.Drawing.Point(96, 65);
-            this.resultImageTb.Name = "resultImageTb";
-            this.resultImageTb.Size = new System.Drawing.Size(383, 20);
-            this.resultImageTb.TabIndex = 11;
-            // 
             // MainWindow
             // 
+            this.AcceptButton = this.goBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 273);

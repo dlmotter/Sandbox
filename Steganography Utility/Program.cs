@@ -251,11 +251,19 @@ namespace Steganography_Utility
 
                 Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
 
-                resultImage.Save(resultImagePath);
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    using (FileStream fs = new FileStream(resultImagePath, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        resultImage.Save(memory, getImageFormat(fs.Name));
+                        byte[] bytes = memory.ToArray();
+                        fs.Write(bytes, 0, bytes.Length);
+                    }
+                }
             }
             catch (Exception ex)  
             {
-
+                MessageBox.Show(ex.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -281,12 +289,50 @@ namespace Steganography_Utility
 
                 // Save image
                 Bitmap decodedImage = bytesToBitmap(decodedBytes, width, height);
-                decodedImage.Save(resultImagePath);
+
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    using (FileStream fs = new FileStream(resultImagePath, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        decodedImage.Save(memory, getImageFormat(fs.Name));
+                        byte[] bytes = memory.ToArray();
+                        fs.Write(bytes, 0, bytes.Length);
+                    }
+                }
             }
             else
             {
                 // Look for encoded text, TBI
 
+            }
+        }
+
+        /// <summary>
+        /// Gets the ImageFormat property befitting the file passed in. If it's a non-supported type, it returns ImageFormat.Bmp.
+        /// </summary>
+        /// <param name="filePath">The full filepath of the file</param>
+        /// <returns>The ImageFormat property</returns>
+        static private ImageFormat getImageFormat(string filePath)
+        {
+            string extension = Path.GetExtension(filePath);
+            if (!string.IsNullOrEmpty(extension))
+            {
+                switch (extension)
+                {
+                    case @".bmp":
+                        return ImageFormat.Bmp;
+                    case @".jpg":
+                    case @".jpeg":
+                        return ImageFormat.Jpeg;
+                    case @".png":
+                        return ImageFormat.Png;
+                    default:
+                        return ImageFormat.Bmp;
+                }
+            }
+            else
+            {
+                return ImageFormat.Bmp;
             }
         }
 
