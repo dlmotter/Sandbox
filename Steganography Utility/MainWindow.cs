@@ -32,6 +32,13 @@ namespace Steganography_Utility
             decodedImageTb.DragDrop += GenericTextBox_DragDrop;
         }
 
+        private void hiddenTextRb_CheckedChanged(object sender, EventArgs e)
+        {
+            hiddenTextTb.Enabled = hiddenTextRb.Checked;
+            hiddenImageBtn.Enabled = !hiddenTextRb.Checked;
+            hiddenImageTb.Enabled = !hiddenTextRb.Checked;
+        }
+
         #region Button clicks
         private void goBtn_Click(object sender, EventArgs e)
         {
@@ -90,13 +97,21 @@ namespace Steganography_Utility
         {
             try {
                 // Since there's only one background worker, check to see which function we are supposed to do
-                if ((string)e.Argument == "encode")
+                if ((string)e.Argument == "encodeImage")
                 {
                     Program.saveEncodedImage(containerImageTb.Text, hiddenImageTb.Text, resultImageTb.Text);
                 }
-                else
+                else if ((string)e.Argument == "encodeText")
+                {
+                    Program.saveEncodedText(containerImageTb.Text, hiddenTextTb.Text, resultImageTb.Text);
+                }
+                else if ((string)e.Argument == "decode")
                 {
                     Program.saveDecodedFile(encodedImageTb.Text, decodedImageTb.Text);
+                }
+                else
+                {
+                    throw new Exception(string.Format("Unknown operation: \"{0}\"", (string)e.Argument));
                 }
             }
             catch (Exception ex)
@@ -117,7 +132,22 @@ namespace Steganography_Utility
             goBtn.Enabled = false;
 
             // Perform the correct action depending on the selected tab
-            string arg = MainTabControl.SelectedTab.Name == "encodeTabPage" ? "encode" : "decode";
+            string arg;
+            if (MainTabControl.SelectedTab.Name == "encodeTabPage")
+            {
+                if (hiddenImageRb.Checked)
+                {
+                    arg = "encodeImage";
+                }
+                else
+                {
+                    arg = "encodeText";
+                }
+            }
+            else
+            {
+                arg = "decode";
+            }
 
             // Start the background worker, passing in the process we want to run
             backgroundWorker.RunWorkerAsync(arg);

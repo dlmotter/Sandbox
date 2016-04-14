@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.MainTabControl = new System.Windows.Forms.TabControl();
@@ -53,6 +54,7 @@
             this.goBtn = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.noteLbl = new System.Windows.Forms.Label();
             this.MainTabControl.SuspendLayout();
             this.encodeTabPage.SuspendLayout();
             this.decodeTabPage.SuspendLayout();
@@ -60,8 +62,7 @@
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.DefaultExt = "bmp";
-            this.saveFileDialog.Filter = "Bitmap|*.bmp|PNG|*.png|JPEG|*.jpg,*.jpeg";
+            this.saveFileDialog.Filter = "PNG|*.png|Bitmap|*.bmp|JPEG|*.jpg,*.jpeg|Text|*.txt";
             // 
             // MainTabControl
             // 
@@ -190,13 +191,13 @@
             // hiddenTextRb
             // 
             this.hiddenTextRb.AutoSize = true;
-            this.hiddenTextRb.Enabled = false;
             this.hiddenTextRb.Location = new System.Drawing.Point(6, 144);
             this.hiddenTextRb.Name = "hiddenTextRb";
-            this.hiddenTextRb.Size = new System.Drawing.Size(83, 17);
+            this.hiddenTextRb.Size = new System.Drawing.Size(273, 17);
             this.hiddenTextRb.TabIndex = 1;
-            this.hiddenTextRb.Text = "Hidden Text";
+            this.hiddenTextRb.Text = "Hidden Text (ASCII only) (Ctrl+Enter to start new line)";
             this.hiddenTextRb.UseVisualStyleBackColor = true;
+            this.hiddenTextRb.CheckedChanged += new System.EventHandler(this.hiddenTextRb_CheckedChanged);
             // 
             // hiddenImageRb
             // 
@@ -212,6 +213,7 @@
             // 
             // decodeTabPage
             // 
+            this.decodeTabPage.Controls.Add(this.noteLbl);
             this.decodeTabPage.Controls.Add(this.decodedImageTb);
             this.decodeTabPage.Controls.Add(this.decodedImageBtn);
             this.decodeTabPage.Controls.Add(this.decodedImageLbl);
@@ -251,9 +253,9 @@
             this.decodedImageLbl.AutoSize = true;
             this.decodedImageLbl.Location = new System.Drawing.Point(6, 47);
             this.decodedImageLbl.Name = "decodedImageLbl";
-            this.decodedImageLbl.Size = new System.Drawing.Size(83, 13);
+            this.decodedImageLbl.Size = new System.Drawing.Size(70, 13);
             this.decodedImageLbl.TabIndex = 9;
-            this.decodedImageLbl.Text = "Decoded Image";
+            this.decodedImageLbl.Text = "Decoded File";
             this.decodedImageLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // encodedImageTb
@@ -311,6 +313,17 @@
             // 
             this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
             // 
+            // noteLbl
+            // 
+            this.noteLbl.AutoSize = true;
+            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.noteLbl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.noteLbl.Location = new System.Drawing.Point(6, 98);
+            this.noteLbl.Name = "noteLbl";
+            this.noteLbl.Size = new System.Drawing.Size(426, 60);
+            this.noteLbl.TabIndex = 12;
+            this.noteLbl.Text = resources.GetString("noteLbl.Text");
+            // 
             // MainWindow
             // 
             this.AcceptButton = this.goBtn;
@@ -322,6 +335,7 @@
             this.Controls.Add(this.MainTabControl);
             this.MinimumSize = new System.Drawing.Size(534, 312);
             this.Name = "MainWindow";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Steganography Utility";
             this.MainTabControl.ResumeLayout(false);
             this.encodeTabPage.ResumeLayout(false);
@@ -359,6 +373,7 @@
         private System.Windows.Forms.TextBox resultImageTb;
         private System.Windows.Forms.Button resultImageBtn;
         private System.Windows.Forms.Label resultImageLbl;
+        private System.Windows.Forms.Label noteLbl;
     }
 }
 

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Steganography_Utility
@@ -231,7 +232,7 @@ namespace Steganography_Utility
         }
 
         /// <summary>
-        /// Saves an encoded version of an image. All major image types supported (bmp, png, jpg, ...)
+        /// Saves an encoded version of an image. Supported image types are bmp, png, jpg, and jpeg
         /// </summary>
         /// <param name="superImagePath">The filepath of the container image</param>
         /// <param name="subImagePath">The filepath of the secret image</param>
@@ -254,24 +255,37 @@ namespace Steganography_Utility
             var encodedBytes = encodeByteList(superBytes, subBytes);
 
             Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
-
-            using (MemoryStream memory = new MemoryStream())
-            {
-                using (FileStream fs = new FileStream(resultImagePath, FileMode.Create, FileAccess.ReadWrite))
-                {
-                    resultImage.Save(memory, getImageFormat(fs.Name));
-                    byte[] bytes = memory.ToArray();
-                    fs.Write(bytes, 0, bytes.Length);
-                }
-            }
+            SaveBitmap(resultImage, resultImagePath);
         }
 
         /// <summary>
-        /// Saves a decoded file. For now only supports images. Eventually will support text as well.
+        /// Saves an image encoded with secret text
+        /// </summary>
+        /// <param name="superImagePath"></param>
+        /// <param name="secretText"></param>
+        /// <param name="resultImagePath"></param>
+        static public void saveEncodedText(string superImagePath, string secretText, string resultImagePath)
+        {
+            Bitmap superImage = new Bitmap(superImagePath);
+            var superBytes = bitmapToBytes(superImage);
+
+            var subBytes = new List<byte>();
+            subBytes.Add(Convert.ToByte(1));                        // 1 as first secret byte indicates hidden text (as opposed to an image)
+            subBytes.AddRange(intToBytes(secretText.Length, 8));    // Next 8 secret bytes indicate text length
+            subBytes.AddRange(Encoding.ASCII.GetBytes(secretText)); // The rest of the secret bytes are the hidden text as ascii bytes
+
+            var encodedBytes = encodeByteList(superBytes, subBytes);
+
+            Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
+            SaveBitmap(resultImage, resultImagePath);
+        }
+
+        /// <summary>
+        /// Saves a decoded file
         /// </summary>
         /// <param name="encodedImagePath">The filepath of the encoded image</param>
-        /// <param name="resultImagePath">The filepath to save the resultant, decoded image</param>
-        static public void saveDecodedFile(string encodedImagePath, string resultImagePath)
+        /// <param name="resultPath">The filepath to save the resultant, decoded file</param>
+        static public void saveDecodedFile(string encodedImagePath, string resultPath)
         {
             Bitmap encodedImage = new Bitmap(encodedImagePath);
             var encodedBytes = bitmapToBytes(encodedImage);
@@ -279,6 +293,8 @@ namespace Steganography_Utility
 
             if (decodedBytes[0] == 0)
             {
+                // Image
+
                 // Get width and height from header
                 var width = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
                 var height = bytesToInt(decodedBytes.Skip(5).Take(4).ToList());
@@ -288,24 +304,25 @@ namespace Steganography_Utility
 
                 // Save image
                 Bitmap decodedImage = bytesToBitmap(decodedBytes, width, height);
-
-                using (MemoryStream memory = new MemoryStream())
-                {
-                    using (FileStream fs = new FileStream(resultImagePath, FileMode.Create, FileAccess.ReadWrite))
-                    {
-                        decodedImage.Save(memory, getImageFormat(fs.Name));
-                        byte[] bytes = memory.ToArray();
-                        fs.Write(bytes, 0, bytes.Length);
-                    }
-                }
+                SaveBitmap(decodedImage, resultPath);
             }
             else if (decodedBytes[0] == 1)
             {
-                // Look for encoded text, TBI
-                throw new Exception("Text decoding is not implemented yet");
+                // Text
+
+                // Get length of hidden text from header
+                var length = bytesToInt(decodedBytes.Skip(1).Take(8).ToList());
+
+                // Remove header
+                decodedBytes.RemoveRange(0, 9);
+
+                // Save text. Use the txt extension no matter what user chose
+                File.WriteAllBytes(Path.ChangeExtension(resultPath, "txt"), decodedBytes.Take(length).ToArray());
             }
             else
             {
+                // Unknown
+
                 throw new Exception("Did not detect encoded data in the file");
             }
         }
@@ -339,6 +356,29 @@ namespace Steganography_Utility
             }
         }
 
+        /// <summary>
+        /// Saves a Bitmap object to a file. Works like the Bitmap.Save(path) built-in method, but doesn't throw the "Generic Error Occurred in GDI+" error
+        /// </summary>
+        /// <param name="image">The Bitmap object</param>
+        /// <param name="filePath">The path to save the file, including the filename and extension</param>
+        static private void SaveBitmap(Bitmap image, string filePath)
+        {
+            // If no extension is specified, use png
+            if (string.IsNullOrEmpty(Path.GetExtension(filePath)) || Path.GetExtension(filePath) == ".txt")
+            {
+                filePath = Path.ChangeExtension(filePath, "png");
+            }
+
+            using (MemoryStream memory = new MemoryStream())
+            {
+                using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
+                {
+                    image.Save(memory, getImageFormat(fs.Name));
+                    byte[] bytes = memory.ToArray();
+                    fs.Write(bytes, 0, bytes.Length);
+                }
+            }
+        }
         #endregion
     }
 }
