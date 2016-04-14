@@ -25,31 +25,31 @@ namespace Steganography_Utility
         #region Conversion functions
 
         /// <summary>
-        /// Convert an integer to n number of bytes using the big endian convention
+        /// Convert a long to n number of bytes using the big endian convention
         /// <para>  For example, using 2 bytes, 1920 in binary is: 0000 0111 1000 0000</para>
         /// <para>  Converting each byte back to decimal, we get 7 and 128</para>
         /// <para>  So, this function would return { 7, 128 }</para>
         /// </summary>
-        /// <param name="integer">The integer to convert</param>
-        /// <param name="numBytes">The number of bytes to turn it into (maximum 8 since we used Int64)</param>
-        /// <returns>The list of bytes representing the integer</returns>
-        static private List<byte> intToBytes(int integer, int numBytes)
+        /// <param name="value">The long to convert</param>
+        /// <param name="numBytes">The number of bytes to turn it into (maximum 8 since we used long is 64 bit)</param>
+        /// <returns>The list of bytes representing the long</returns>
+        static private List<byte> longToBytes(long value, int numBytes)
         {
             if (numBytes > 0 && numBytes <= 8)
             {
                 List<byte> retVal = new List<byte>();
-                string bits = Convert.ToString(integer, 2);
+                string bits = Convert.ToString(value, 2);
                 if (bits.Length <= (8 * numBytes))
                 {
                     string paddedBits = bits.PadLeft((8 * numBytes), '0');
                     for (int i = 0; i < (8 * numBytes); i += 8)
                     {
-                        retVal.Add((byte)Convert.ToInt64(paddedBits.Substring(i, 8), 2));
+                        retVal.Add(Convert.ToByte(paddedBits.Substring(i, 8), 2));
                     }
                 }
                 else
                 {
-                    throw new Exception("Not enough bytes to contain the integer provided");
+                    throw new Exception("Not enough bytes to contain the long provided");
                 }
                 return retVal;
             }
@@ -60,21 +60,21 @@ namespace Steganography_Utility
         }
 
         /// <summary>
-        /// Convert an array of bytes into an integer using the big endian convention
+        /// Convert an array of bytes into a long using the big endian convention
         /// <para>  For example, pass in { 7, 128 }</para>
         /// <para>  Converting these bytes to binary gives you: 0000 0111 1000 0000</para>
-        /// <para>  Parse that binary as one integer and you get 1920</para>
+        /// <para>  Parse that binary as one long and you get 1920</para>
         /// </summary>
-        /// <param name="list">The list of bytes to convert to an integer</param>
-        /// <returns>The integer obtained from the byte list</returns>
-        static private int bytesToInt(List<byte> list)
+        /// <param name="list">The list of bytes to convert to a long</param>
+        /// <returns>The long obtained from the byte list</returns>
+        static private long bytesToLong(List<byte> list)
         {
             string bits = string.Empty;
             foreach (byte b in list)
             {
                 bits = string.Concat(bits, Convert.ToString(b, 2).PadLeft(8, '0'));
             }
-            return Convert.ToInt32(bits, 2);
+            return Convert.ToInt64(bits, 2);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Steganography_Utility
         /// <returns>The Bitmap object created from the RGB values in the list</returns>
         static private Bitmap bytesToBitmap(List<byte> bytes, int width, int height)
         {
-            Bitmap retVal = new Bitmap(width, height, PixelFormat.Format32bppRgb);
+            Bitmap retVal = new Bitmap(width, height);
 
             int byteIndex = 0;
             for (int y = 0; y < height; y++)
@@ -178,8 +178,7 @@ namespace Steganography_Utility
                         string secretBits = subBits.Substring((superIndex % 4) * 2, 2);
 
                         string resultBits = string.Concat(containerBits, secretBits);
-                        int resultInt = Convert.ToInt32(resultBits, 2);
-                        resultList.Add(Convert.ToByte(resultInt));
+                        resultList.Add(Convert.ToByte(resultBits, 2));
                     }
                     else
                     {
@@ -225,7 +224,7 @@ namespace Steganography_Utility
                     string secretBits = Convert.ToString(encodedByteList[encodedIndex + i], 2).PadLeft(8, '0').Substring(6, 2);
                     resultantByteBinary = string.Concat(resultantByteBinary, secretBits);
                 }
-                decodedByteList.Add((byte)Convert.ToInt32(resultantByteBinary, 2));
+                decodedByteList.Add(Convert.ToByte(resultantByteBinary, 2));
             }
 
             return decodedByteList;
@@ -247,10 +246,10 @@ namespace Steganography_Utility
             var superBytes = bitmapToBytes(superImage);
 
             var subBytes = new List<byte>();
-            subBytes.Add(Convert.ToByte(0));                   // 0 as first secret byte indicates a hidden image (as opposed to text, TBI)
-            subBytes.AddRange(intToBytes(subImage.Width, 4));  // Next 4 secret bytes tell hidden image width
-            subBytes.AddRange(intToBytes(subImage.Height, 4)); // Next 4 secret bytes tell hidden image height
-            subBytes.AddRange(bitmapToBytes(subImage));        // The rest of the secret bytes are the hidden image RGB data
+            subBytes.Add(Convert.ToByte(0));                    // 0 as first secret byte indicates a hidden image (as opposed to text, TBI)
+            subBytes.AddRange(longToBytes(subImage.Width, 4));  // Next 4 secret bytes tell hidden image width
+            subBytes.AddRange(longToBytes(subImage.Height, 4)); // Next 4 secret bytes tell hidden image height
+            subBytes.AddRange(bitmapToBytes(subImage));         // The rest of the secret bytes are the hidden image RGB data
 
             var encodedBytes = encodeByteList(superBytes, subBytes);
 
@@ -271,7 +270,7 @@ namespace Steganography_Utility
 
             var subBytes = new List<byte>();
             subBytes.Add(Convert.ToByte(1));                        // 1 as first secret byte indicates hidden text (as opposed to an image)
-            subBytes.AddRange(intToBytes(secretText.Length, 8));    // Next 8 secret bytes indicate text length
+            subBytes.AddRange(longToBytes(secretText.Length, 8));   // Next 8 secret bytes indicate text length
             subBytes.AddRange(Encoding.ASCII.GetBytes(secretText)); // The rest of the secret bytes are the hidden text as ascii bytes
 
             var encodedBytes = encodeByteList(superBytes, subBytes);
@@ -296,8 +295,8 @@ namespace Steganography_Utility
                 // Image
 
                 // Get width and height from header
-                var width = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
-                var height = bytesToInt(decodedBytes.Skip(5).Take(4).ToList());
+                var width = Convert.ToInt32(bytesToLong(decodedBytes.Skip(1).Take(4).ToList()));
+                var height = Convert.ToInt32(bytesToLong(decodedBytes.Skip(5).Take(4).ToList()));
 
                 // Remove header
                 decodedBytes.RemoveRange(0, 9);
@@ -311,7 +310,7 @@ namespace Steganography_Utility
                 // Text
 
                 // Get length of hidden text from header
-                var length = bytesToInt(decodedBytes.Skip(1).Take(8).ToList());
+                var length = Convert.ToInt32(bytesToLong(decodedBytes.Skip(1).Take(8).ToList()));
 
                 // Remove header
                 decodedBytes.RemoveRange(0, 9);

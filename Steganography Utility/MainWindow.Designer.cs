@@ -45,6 +45,7 @@
             this.hiddenTextRb = new System.Windows.Forms.RadioButton();
             this.hiddenImageRb = new System.Windows.Forms.RadioButton();
             this.decodeTabPage = new System.Windows.Forms.TabPage();
+            this.noteLbl = new System.Windows.Forms.Label();
             this.decodedImageTb = new System.Windows.Forms.TextBox();
             this.decodedImageBtn = new System.Windows.Forms.Button();
             this.decodedImageLbl = new System.Windows.Forms.Label();
@@ -54,7 +55,6 @@
             this.goBtn = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.noteLbl = new System.Windows.Forms.Label();
             this.MainTabControl.SuspendLayout();
             this.encodeTabPage.SuspendLayout();
             this.decodeTabPage.SuspendLayout();
@@ -75,7 +75,7 @@
             this.MainTabControl.Name = "MainTabControl";
             this.MainTabControl.SelectedIndex = 0;
             this.MainTabControl.Size = new System.Drawing.Size(493, 219);
-            this.MainTabControl.TabIndex = 0;
+            this.MainTabControl.TabIndex = 5;
             // 
             // encodeTabPage
             // 
@@ -105,15 +105,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.resultImageTb.Location = new System.Drawing.Point(96, 65);
             this.resultImageTb.Name = "resultImageTb";
+            this.resultImageTb.ReadOnly = true;
             this.resultImageTb.Size = new System.Drawing.Size(383, 20);
-            this.resultImageTb.TabIndex = 11;
+            this.resultImageTb.TabIndex = 0;
+            this.resultImageTb.TabStop = false;
             // 
             // resultImageBtn
             // 
             this.resultImageBtn.Location = new System.Drawing.Point(15, 63);
             this.resultImageBtn.Name = "resultImageBtn";
             this.resultImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.resultImageBtn.TabIndex = 10;
+            this.resultImageBtn.TabIndex = 2;
             this.resultImageBtn.Text = "Choose...";
             this.resultImageBtn.UseVisualStyleBackColor = true;
             this.resultImageBtn.Click += new System.EventHandler(this.GenericFileSave_Click);
@@ -124,7 +126,7 @@
             this.resultImageLbl.Location = new System.Drawing.Point(6, 47);
             this.resultImageLbl.Name = "resultImageLbl";
             this.resultImageLbl.Size = new System.Drawing.Size(69, 13);
-            this.resultImageLbl.TabIndex = 9;
+            this.resultImageLbl.TabIndex = 0;
             this.resultImageLbl.Text = "Result Image";
             // 
             // containerLbl
@@ -133,7 +135,7 @@
             this.containerLbl.Location = new System.Drawing.Point(6, 3);
             this.containerLbl.Name = "containerLbl";
             this.containerLbl.Size = new System.Drawing.Size(84, 13);
-            this.containerLbl.TabIndex = 8;
+            this.containerLbl.TabIndex = 0;
             this.containerLbl.Text = "Container Image";
             // 
             // containerImageTb
@@ -143,15 +145,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.containerImageTb.Location = new System.Drawing.Point(96, 23);
             this.containerImageTb.Name = "containerImageTb";
+            this.containerImageTb.ReadOnly = true;
             this.containerImageTb.Size = new System.Drawing.Size(383, 20);
-            this.containerImageTb.TabIndex = 7;
+            this.containerImageTb.TabIndex = 0;
+            this.containerImageTb.TabStop = false;
             // 
             // containerImageBtn
             // 
             this.containerImageBtn.Location = new System.Drawing.Point(15, 21);
             this.containerImageBtn.Name = "containerImageBtn";
             this.containerImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.containerImageBtn.TabIndex = 6;
+            this.containerImageBtn.TabIndex = 1;
             this.containerImageBtn.Text = "Choose...";
             this.containerImageBtn.UseVisualStyleBackColor = true;
             this.containerImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
@@ -185,8 +189,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hiddenImageTb.Location = new System.Drawing.Point(96, 118);
             this.hiddenImageTb.Name = "hiddenImageTb";
+            this.hiddenImageTb.ReadOnly = true;
             this.hiddenImageTb.Size = new System.Drawing.Size(383, 20);
-            this.hiddenImageTb.TabIndex = 2;
+            this.hiddenImageTb.TabIndex = 0;
+            this.hiddenImageTb.TabStop = false;
             // 
             // hiddenTextRb
             // 
@@ -194,7 +200,7 @@
             this.hiddenTextRb.Location = new System.Drawing.Point(6, 144);
             this.hiddenTextRb.Name = "hiddenTextRb";
             this.hiddenTextRb.Size = new System.Drawing.Size(273, 17);
-            this.hiddenTextRb.TabIndex = 1;
+            this.hiddenTextRb.TabIndex = 99;
             this.hiddenTextRb.Text = "Hidden Text (ASCII only) (Ctrl+Enter to start new line)";
             this.hiddenTextRb.UseVisualStyleBackColor = true;
             this.hiddenTextRb.CheckedChanged += new System.EventHandler(this.hiddenTextRb_CheckedChanged);
@@ -206,8 +212,7 @@
             this.hiddenImageRb.Location = new System.Drawing.Point(6, 92);
             this.hiddenImageRb.Name = "hiddenImageRb";
             this.hiddenImageRb.Size = new System.Drawing.Size(91, 17);
-            this.hiddenImageRb.TabIndex = 0;
-            this.hiddenImageRb.TabStop = true;
+            this.hiddenImageRb.TabIndex = 99;
             this.hiddenImageRb.Text = "Hidden Image";
             this.hiddenImageRb.UseVisualStyleBackColor = true;
             // 
@@ -228,6 +233,17 @@
             this.decodeTabPage.Text = "Decode";
             this.decodeTabPage.UseVisualStyleBackColor = true;
             // 
+            // noteLbl
+            // 
+            this.noteLbl.AutoSize = true;
+            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.noteLbl.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.noteLbl.Location = new System.Drawing.Point(6, 98);
+            this.noteLbl.Name = "noteLbl";
+            this.noteLbl.Size = new System.Drawing.Size(426, 60);
+            this.noteLbl.TabIndex = 12;
+            this.noteLbl.Text = resources.GetString("noteLbl.Text");
+            // 
             // decodedImageTb
             // 
             this.decodedImageTb.AllowDrop = true;
@@ -235,15 +251,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.decodedImageTb.Location = new System.Drawing.Point(96, 65);
             this.decodedImageTb.Name = "decodedImageTb";
+            this.decodedImageTb.ReadOnly = true;
             this.decodedImageTb.Size = new System.Drawing.Size(383, 20);
-            this.decodedImageTb.TabIndex = 11;
+            this.decodedImageTb.TabIndex = 0;
+            this.decodedImageTb.TabStop = false;
             // 
             // decodedImageBtn
             // 
             this.decodedImageBtn.Location = new System.Drawing.Point(15, 63);
             this.decodedImageBtn.Name = "decodedImageBtn";
             this.decodedImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.decodedImageBtn.TabIndex = 10;
+            this.decodedImageBtn.TabIndex = 7;
             this.decodedImageBtn.Text = "Choose...";
             this.decodedImageBtn.UseVisualStyleBackColor = true;
             this.decodedImageBtn.Click += new System.EventHandler(this.GenericFileSave_Click);
@@ -265,15 +283,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.encodedImageTb.Location = new System.Drawing.Point(96, 23);
             this.encodedImageTb.Name = "encodedImageTb";
+            this.encodedImageTb.ReadOnly = true;
             this.encodedImageTb.Size = new System.Drawing.Size(383, 20);
-            this.encodedImageTb.TabIndex = 8;
+            this.encodedImageTb.TabIndex = 0;
+            this.encodedImageTb.TabStop = false;
             // 
             // encodedImageBtn
             // 
             this.encodedImageBtn.Location = new System.Drawing.Point(15, 21);
             this.encodedImageBtn.Name = "encodedImageBtn";
             this.encodedImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.encodedImageBtn.TabIndex = 7;
+            this.encodedImageBtn.TabIndex = 6;
             this.encodedImageBtn.Text = "Choose...";
             this.encodedImageBtn.UseVisualStyleBackColor = true;
             this.encodedImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
@@ -293,7 +313,7 @@
             this.goBtn.Location = new System.Drawing.Point(431, 238);
             this.goBtn.Name = "goBtn";
             this.goBtn.Size = new System.Drawing.Size(75, 23);
-            this.goBtn.TabIndex = 9;
+            this.goBtn.TabIndex = 8;
             this.goBtn.Text = "Go";
             this.goBtn.UseVisualStyleBackColor = true;
             this.goBtn.Click += new System.EventHandler(this.goBtn_Click);
@@ -312,17 +332,6 @@
             // backgroundWorker
             // 
             this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
-            // 
-            // noteLbl
-            // 
-            this.noteLbl.AutoSize = true;
-            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.noteLbl.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.noteLbl.Location = new System.Drawing.Point(6, 98);
-            this.noteLbl.Name = "noteLbl";
-            this.noteLbl.Size = new System.Drawing.Size(426, 60);
-            this.noteLbl.TabIndex = 12;
-            this.noteLbl.Text = resources.GetString("noteLbl.Text");
             // 
             // MainWindow
             // 
