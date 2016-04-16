@@ -11,7 +11,9 @@ namespace Steganography_Utility
 {
     static class Program
     {
-        private static List<string> _validExtensions = new List<string> { ".bmp", ".png", ".jpg", ".jpeg" };
+        // As I test with more extensions types, these lists will grow
+        private static List<string> _validInputExtensions = new List<string> { ".bmp", ".png", ".jpg", ".jpeg" };
+        private static List<string> _validOutputExtensions = new List<string> { ".bmp", ".png" };
 
         /// <summary>
         /// The main entry point for the application.
@@ -241,7 +243,9 @@ namespace Steganography_Utility
         /// <param name="resultImagePath">The filepath to save the resultant, encoded image</param>
         static public void saveEncodedImage(string superImagePath, string subImagePath, string resultImagePath)
         {
-            validateExtensions(superImagePath, subImagePath, resultImagePath);
+            validateInputExtensions(superImagePath, subImagePath);
+            validateOutputExtensions(resultImagePath);
+
             // The super and sub images don't necessarily have to be .bmp file format.
             // You can pass a file of any format supported by the Image class to the Bitmap constructor
             Bitmap superImage = new Bitmap(superImagePath);
@@ -269,7 +273,9 @@ namespace Steganography_Utility
         /// <param name="resultImagePath"></param>
         static public void saveEncodedText(string superImagePath, string secretText, string resultImagePath)
         {
-            validateExtensions(superImagePath, resultImagePath);
+            validateInputExtensions(superImagePath);
+            validateOutputExtensions(resultImagePath);
+
             Bitmap superImage = new Bitmap(superImagePath);
             var superBytes = bitmapToBytes(superImage);
 
@@ -291,7 +297,9 @@ namespace Steganography_Utility
         /// <param name="resultPath">The filepath to save the resultant, decoded file</param>
         static public void saveDecodedFile(string encodedImagePath, string resultPath)
         {
-            validateExtensions(encodedImagePath, resultPath);
+            validateInputExtensions(encodedImagePath);
+            validateOutputExtensions(resultPath);
+
             Bitmap encodedImage = new Bitmap(encodedImagePath);
             var encodedBytes = bitmapToBytes(encodedImage);
             var decodedBytes = decodeByteList(encodedBytes);
@@ -386,15 +394,28 @@ namespace Steganography_Utility
         }
 
         /// <summary>
-        /// Validates that all files have officially supported extensions
+        /// Validates that all input files have officially supported extensions
         /// </summary>
         /// <param name="paths">Any number of full filepaths as strings</param>
-        static private void validateExtensions(params string[] paths)
+        static private void validateInputExtensions(params string[] paths)
         {
-            List<string> invalidPaths = paths.Where(path => !_validExtensions.Contains(Path.GetExtension(path))).ToList();
+            List<string> invalidPaths = paths.Where(path => !_validInputExtensions.Contains(Path.GetExtension(path))).ToList();
             if (invalidPaths.Count > 0)
             {
-                throw new Exception(string.Format("All file extensions must be one of these types: {0}", string.Join(", ", _validExtensions)));
+                throw new Exception(string.Format("All input file extensions must be one of these types: {0}", string.Join(", ", _validInputExtensions)));
+            }
+        }
+
+        /// <summary>
+        /// Validates that all output files have officially supported extensions
+        /// </summary>
+        /// <param name="paths">Any number of full filepaths as strings</param>
+        static private void validateOutputExtensions(params string[] paths)
+        {
+            List<string> invalidPaths = paths.Where(path => !_validOutputExtensions.Contains(Path.GetExtension(path))).ToList();
+            if (invalidPaths.Count > 0)
+            {
+                throw new Exception(string.Format("All result file extensions must be one of these types: {0}", string.Join(", ", _validOutputExtensions)));
             }
         }
         #endregion
