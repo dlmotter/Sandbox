@@ -53,8 +53,8 @@
             this.encodedImageBtn = new System.Windows.Forms.Button();
             this.encodedImageLbl = new System.Windows.Forms.Label();
             this.goBtn = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.openFolderCb = new System.Windows.Forms.CheckBox();
             this.MainTabControl.SuspendLayout();
             this.encodeTabPage.SuspendLayout();
             this.decodeTabPage.SuspendLayout();
@@ -319,20 +319,22 @@
             this.goBtn.UseVisualStyleBackColor = true;
             this.goBtn.Click += new System.EventHandler(this.goBtn_Click);
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 238);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(413, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar1.TabIndex = 10;
-            this.progressBar1.Visible = false;
-            // 
             // backgroundWorker
             // 
             this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            // 
+            // openFolderCb
+            // 
+            this.openFolderCb.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.openFolderCb.AutoSize = true;
+            this.openFolderCb.Checked = true;
+            this.openFolderCb.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.openFolderCb.Location = new System.Drawing.Point(23, 242);
+            this.openFolderCb.Name = "openFolderCb";
+            this.openFolderCb.Size = new System.Drawing.Size(201, 17);
+            this.openFolderCb.TabIndex = 9;
+            this.openFolderCb.Text = "Open containing folder when finished";
+            this.openFolderCb.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
@@ -340,7 +342,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 273);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.openFolderCb);
             this.Controls.Add(this.goBtn);
             this.Controls.Add(this.MainTabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -354,6 +356,7 @@
             this.decodeTabPage.ResumeLayout(false);
             this.decodeTabPage.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -379,12 +382,12 @@
         private System.Windows.Forms.Label decodedImageLbl;
         private System.Windows.Forms.TextBox decodedImageTb;
         private System.Windows.Forms.Button decodedImageBtn;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.TextBox resultImageTb;
         private System.Windows.Forms.Button resultImageBtn;
         private System.Windows.Forms.Label resultImageLbl;
         private System.Windows.Forms.Label noteLbl;
+        private System.Windows.Forms.CheckBox openFolderCb;
     }
 }
 
