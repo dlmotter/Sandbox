@@ -123,12 +123,6 @@
   <metadata name="saveFileDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>157, 17</value>
   </metadata>
-  <data name="noteLbl.Text" xml:space="preserve">
-    <value>If the decoded file is text, it will be saved as a .txt no matter what.
-
-If it's an image, it will be saved as the format specified above.
-If you do not specify an extension, or you specify .txt , it will be saved as a .png.</value>
-  </data>
   <metadata name="backgroundWorker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>286, 17</value>
   </metadata>

@@ -11,6 +11,8 @@ namespace Steganography_Utility
 {
     static class Program
     {
+        private static List<string> _validExtensions = new List<string> { ".bmp", ".png", ".jpg", ".jpeg" };
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -146,7 +148,8 @@ namespace Steganography_Utility
         /// <para>The encoded list of bytes. The length of the result will be the same as the length of the original super list.</para>
         /// <para>Any bytes in the super list that were not needed for encoding remain unchanged.</para>
         /// </returns>
-        static private List<byte> encodeByteList(List<byte> superList, List<byte> subList) {
+        static private List<byte> encodeByteList(List<byte> superList, List<byte> subList)
+        {
             List<byte> resultList = new List<byte>();
 
             // Make sure that the sublist is at most one fourth the length of the super list
@@ -238,6 +241,7 @@ namespace Steganography_Utility
         /// <param name="resultImagePath">The filepath to save the resultant, encoded image</param>
         static public void saveEncodedImage(string superImagePath, string subImagePath, string resultImagePath)
         {
+            validateExtensions(superImagePath, subImagePath, resultImagePath);
             // The super and sub images don't necessarily have to be .bmp file format.
             // You can pass a file of any format supported by the Image class to the Bitmap constructor
             Bitmap superImage = new Bitmap(superImagePath);
@@ -254,7 +258,7 @@ namespace Steganography_Utility
             var encodedBytes = encodeByteList(superBytes, subBytes);
 
             Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
-            SaveBitmap(resultImage, resultImagePath);
+            saveBitmap(resultImage, resultImagePath);
         }
 
         /// <summary>
@@ -265,6 +269,7 @@ namespace Steganography_Utility
         /// <param name="resultImagePath"></param>
         static public void saveEncodedText(string superImagePath, string secretText, string resultImagePath)
         {
+            validateExtensions(superImagePath, resultImagePath);
             Bitmap superImage = new Bitmap(superImagePath);
             var superBytes = bitmapToBytes(superImage);
 
@@ -276,7 +281,7 @@ namespace Steganography_Utility
             var encodedBytes = encodeByteList(superBytes, subBytes);
 
             Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
-            SaveBitmap(resultImage, resultImagePath);
+            saveBitmap(resultImage, resultImagePath);
         }
 
         /// <summary>
@@ -286,6 +291,7 @@ namespace Steganography_Utility
         /// <param name="resultPath">The filepath to save the resultant, decoded file</param>
         static public void saveDecodedFile(string encodedImagePath, string resultPath)
         {
+            validateExtensions(encodedImagePath, resultPath);
             Bitmap encodedImage = new Bitmap(encodedImagePath);
             var encodedBytes = bitmapToBytes(encodedImage);
             var decodedBytes = decodeByteList(encodedBytes);
@@ -303,7 +309,7 @@ namespace Steganography_Utility
 
                 // Save image
                 Bitmap decodedImage = bytesToBitmap(decodedBytes, width, height);
-                SaveBitmap(decodedImage, resultPath);
+                saveBitmap(decodedImage, resultPath);
             }
             else if (decodedBytes[0] == 1)
             {
@@ -360,7 +366,7 @@ namespace Steganography_Utility
         /// </summary>
         /// <param name="image">The Bitmap object</param>
         /// <param name="filePath">The path to save the file, including the filename and extension</param>
-        static private void SaveBitmap(Bitmap image, string filePath)
+        static private void saveBitmap(Bitmap image, string filePath)
         {
             // If no extension is specified, use png
             if (string.IsNullOrEmpty(Path.GetExtension(filePath)) || Path.GetExtension(filePath) == ".txt")
@@ -376,6 +382,19 @@ namespace Steganography_Utility
                     byte[] bytes = memory.ToArray();
                     fs.Write(bytes, 0, bytes.Length);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Validates that all files have officially supported extensions
+        /// </summary>
+        /// <param name="paths">Any number of full filepaths as strings</param>
+        static private void validateExtensions(params string[] paths)
+        {
+            List<string> invalidPaths = paths.Where(path => !_validExtensions.Contains(Path.GetExtension(path))).ToList();
+            if (invalidPaths.Count > 0)
+            {
+                throw new Exception(string.Format("All file extensions must be one of these types: {0}", string.Join(", ", _validExtensions)));
             }
         }
         #endregion

@@ -62,7 +62,7 @@
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "PNG|*.png|Bitmap|*.bmp|JPEG|*.jpg,*.jpeg|Text|*.txt";
+            this.saveFileDialog.Filter = "PNG|*.png|Bitmap|*.bmp|JPEG|*.jpg,*.jpeg";
             // 
             // MainTabControl
             // 
@@ -213,6 +213,7 @@
             this.hiddenImageRb.Name = "hiddenImageRb";
             this.hiddenImageRb.Size = new System.Drawing.Size(91, 17);
             this.hiddenImageRb.TabIndex = 99;
+            this.hiddenImageRb.TabStop = true;
             this.hiddenImageRb.Text = "Hidden Image";
             this.hiddenImageRb.UseVisualStyleBackColor = true;
             // 
@@ -236,13 +237,13 @@
             // noteLbl
             // 
             this.noteLbl.AutoSize = true;
-            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.noteLbl.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.noteLbl.Location = new System.Drawing.Point(6, 98);
+            this.noteLbl.Location = new System.Drawing.Point(12, 98);
             this.noteLbl.Name = "noteLbl";
-            this.noteLbl.Size = new System.Drawing.Size(426, 60);
+            this.noteLbl.Size = new System.Drawing.Size(432, 15);
             this.noteLbl.TabIndex = 12;
-            this.noteLbl.Text = resources.GetString("noteLbl.Text");
+            this.noteLbl.Text = "If the decoded data is text, it will be saved as a .txt no matter what.";
             // 
             // decodedImageTb
             // 
