@@ -537,7 +537,7 @@ namespace Steganography_Utility
 
             // Create header
             var header = new List<byte>();
-            header.Add(_fileTypeMapping.FirstOrDefault(x => x.Value == Path.GetExtension(filePath)).Key);
+            header.Add(_fileTypeMapping.FirstOrDefault(x => x.Value == Path.GetExtension(filePath).ToLower()).Key);
             header.AddRange(intToBytes(fileBytes.Count, 4));
 
             // Prepend header
