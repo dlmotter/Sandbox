@@ -12,25 +12,245 @@ namespace Steganography_Utility
 {
     static class Program
     {
-        private static List<string> _validContainerImageTypes = new List<string> { ".bmp", ".jpg", ".jpeg", ".png" };
-        private static List<string> _validResultImageTypes = new List<string> { ".bmp", ".png" };
+        #region Global Variables
+        public static List<string> _containerImageTypes = new List<string> { ".bmp", ".png", ".jpg", ".jpeg" };
+        public static string _containerImageFilter = "Bitmap|*.bmp|PNG|*.png|JPEG|*.jpg;*.jpeg";
+        public static List<string> _resultImageTypes = new List<string> { ".bmp", ".png" };
+        public static string _resultImageFilter = "Bitmap|*.bmp|PNG|*.png";
 
-        // Try to figure out a better way to do this. Need to be able to save filetype information in one byte
-        private static Dictionary<int, string> _fileTypeMapping = new Dictionary<int, string>()
+        // Try to figure out a better way to do this. Need to be able to save filetype information in one byte.
+        // For now, use a 1-1 mapping with most common filetypes according to http://fileinfo.com/filetypes/common
+        public static Dictionary<byte, string> _fileTypeMapping = new Dictionary<byte, string>()
         {
-            // 0 - 49 reserved for image files
-            { 0, ".bmp" },
-            { 1, ".jpg" },
-            { 2, ".jpeg" },
-            { 3, ".png" },
-            // 50 - 99 reserved for text files
-            { 50, ".txt" },
-            // 100 - 146 reserved for sound files
-            { 100, ".mp3" },
-            // 150 - 255 reserved for miscellaneous
-            { 150, ".zip" },
-            { 151, ".rar" }
+            #region Text files
+            { 000, ".doc" },
+            { 001, ".docx" },
+            { 002, ".log" },
+            { 003, ".msg" },
+            { 004, ".odt" },
+            { 005, ".pages" },
+            { 006, ".rtf" },
+            { 007, ".tex" },
+            { 008, ".txt" },
+            { 009, ".wpd" },
+            { 010, ".wps" },
+            #endregion
+            #region Data files
+            { 011, ".csv" },
+            { 012, ".dat" },
+            { 013, ".ged" },
+            { 014, ".key" },
+            { 015, ".keychain" },
+            { 016, ".pps" },
+            { 017, ".ppt" },
+            { 018, ".pptx" },
+            { 019, ".sdf" },
+            { 020, ".tar" },
+            { 021, ".tax2014" },
+            { 022, ".tax2015" },
+            { 023, ".vcf" },
+            { 024, ".xml" },
+            #endregion
+            #region Audio Files
+            { 025, ".aif" },
+            { 026, ".iff" },
+            { 027, ".m3u" },
+            { 028, ".m4a" },
+            { 029, ".mid" },
+            { 030, ".mp3" },
+            { 031, ".mpa" },
+            { 032, ".wav" },
+            { 033, ".wma" },
+            #endregion
+            #region Video Files
+            { 034, ".3g2" },
+            { 035, ".3gp" },
+            { 036, ".asf" },
+            { 037, ".avi" },
+            { 038, ".flv" },
+            { 039, ".m4v" },
+            { 040, ".mov" },
+            { 041, ".mp4" },
+            { 042, ".mpg" },
+            { 043, ".rm" },
+            { 044, ".srt" },
+            { 045, ".swf" },
+            { 046, ".vob" },
+            { 047, ".wmv" },
+            #endregion
+            #region 3D Image Files
+            { 048, ".3dm" },
+            { 049, ".3ds" },
+            { 050, ".max" },
+            { 051, ".obj" },
+            #endregion
+            #region Raster Image Files
+            { 052, ".bmp" },
+            { 053, ".dds" },
+            { 054, ".gif" },
+            { 055, ".jpg" },
+            { 056, ".png" },
+            { 057, ".psd" },
+            { 058, ".pspimage" },
+            { 059, ".tga" },
+            { 060, ".thm" },
+            { 061, ".tif" },
+            { 062, ".tiff" },
+            { 063, ".yuv" },
+            #endregion
+            #region Vector Image Files
+            { 064, ".ai" },
+            { 065, ".eps" },
+            { 066, ".ps" },
+            { 067, ".svg" },
+            #endregion
+            #region Page Layout Files
+            { 068, ".indd" },
+            { 069, ".pct" },
+            { 070, ".pdf" },
+            #endregion
+            #region Spreadsheet Files
+            { 071, ".xlr" },
+            { 072, ".xls" },
+            { 073, ".xlsx" },
+            #endregion
+            #region Database Files
+            { 074, ".accdb" },
+            { 075, ".db" },
+            { 076, ".dbf" },
+            { 077, ".mdb" },
+            { 078, ".pdb" },
+            { 079, ".sql" },
+            #endregion
+            #region Executable Files
+            { 080, ".apk" },
+            { 081, ".app" },
+            { 082, ".bat" },
+            { 083, ".cgi" },
+            { 084, ".com" },
+            { 085, ".exe" },
+            { 086, ".gadget" },
+            { 087, ".jar" },
+            { 088, ".pif" },
+            { 089, ".wsf" },
+            #endregion
+            #region Game Files
+            { 090, ".dem" },
+            { 091, ".gam" },
+            { 092, ".nes" },
+            { 093, ".rom" },
+            { 094, ".sav" },
+            #endregion
+            #region CAD Files
+            { 095, ".dwg" },
+            { 096, ".dxf" },
+            #endregion
+            #region GIS Files
+            { 097, ".gpx" },
+            { 098, ".kml" },
+            { 099, ".kmz" },
+            #endregion
+            #region Web Files
+            { 100, ".asp" },
+            { 101, ".aspx" },
+            { 102, ".cer" },
+            { 103, ".cfm" },
+            { 104, ".csr" },
+            { 105, ".css" },
+            { 106, ".htm" },
+            { 107, ".html" },
+            { 108, ".js" },
+            { 109, ".jsp" },
+            { 110, ".php" },
+            { 111, ".rss" },
+            { 112, ".xhtml" },
+            #endregion
+            #region Plugin Files
+            { 113, ".crx" },
+            { 114, ".plugin" },
+            #endregion
+            #region Font Files
+            { 115, ".fnt" },
+            { 116, ".fon" },
+            { 117, ".otf" },
+            { 118, ".ttf" },
+            #endregion
+            #region System Files
+            { 119, ".cab" },
+            { 120, ".cpl" },
+            { 121, ".cur" },
+            { 122, ".deskthemepack" },
+            { 123, ".dll" },
+            { 124, ".dmp" },
+            { 125, ".drv" },
+            { 126, ".icns" },
+            { 127, ".ico" },
+            { 128, ".lnk" },
+            { 129, ".sys" },
+            #endregion
+            #region Settings Files
+            { 130, ".cfg" },
+            { 131, ".ini" },
+            { 132, ".prf" },
+            #endregion
+            #region Encoded Files
+            { 133, ".hqx" },
+            { 134, ".mim" },
+            { 135, ".uue" },
+            #endregion
+            #region Compressed Files
+            { 136, ".7z" },
+            { 137, ".cbr" },
+            { 138, ".deb" },
+            { 139, ".gz" },
+            { 140, ".pkg" },
+            { 141, ".rar" },
+            { 142, ".rpm" },
+            { 143, ".sitx" },
+            { 144, ".tar.gz" },
+            { 145, ".zip" },
+            { 146, ".zipx" },
+            #endregion
+            #region Disk Image Files
+            { 147, ".bin" },
+            { 148, ".cue" },
+            { 149, ".dmg" },
+            { 150, ".iso" },
+            { 151, ".mdf" },
+            { 152, ".toast" },
+            { 153, ".vcd" },
+            #endregion
+            #region Developer Files
+            { 154, ".c" },
+            { 155, ".class" },
+            { 156, ".cpp" },
+            { 157, ".cs" },
+            { 158, ".dtd" },
+            { 159, ".fla" },
+            { 160, ".h" },
+            { 161, ".java" },
+            { 162, ".lua" },
+            { 163, ".m" },
+            { 164, ".pl" },
+            { 165, ".py" },
+            { 166, ".sh" },
+            { 167, ".sln" },
+            { 168, ".swift" },
+            { 169, ".vb" },
+            { 170, ".vcxproj" },
+            { 171, ".xcodeproj" },
+            #endregion
+            #region Backup Files
+            { 172, ".bak" },
+            { 173, ".tmp" },
+            { 174, ".crdownload" },
+            { 175, ".ics" },
+            { 176, ".msi" },
+            { 177, ".part" },
+            { 178, ".torrent" }
+            #endregion
         };
+        #endregion
 
         /// <summary>
         /// The main entry point for the application.
@@ -46,17 +266,17 @@ namespace Steganography_Utility
         #region Conversion functions
 
         /// <summary>
-        /// Convert a long to n number of bytes using the big endian convention
+        /// Convert an int to n number of bytes using the big endian convention
         /// <para>  For example, using 2 bytes, 1920 in binary is: 0000 0111 1000 0000</para>
         /// <para>  Converting each byte back to decimal, we get 7 and 128</para>
         /// <para>  So, this function would return { 7, 128 }</para>
         /// </summary>
-        /// <param name="value">The long to convert</param>
-        /// <param name="numBytes">The number of bytes to turn it into (maximum 8 since we used long is 64 bit)</param>
-        /// <returns>The list of bytes representing the long</returns>
-        static private List<byte> longToBytes(long value, int numBytes)
+        /// <param name="value">The int to convert</param>
+        /// <param name="numBytes">The number of bytes to turn it into (maximum 4 since we used int is 32 bit)</param>
+        /// <returns>The list of bytes representing the int</returns>
+        static private List<byte> intToBytes(int value, int numBytes)
         {
-            if (numBytes > 0 && numBytes <= 8)
+            if (numBytes > 0 && numBytes <= 4)
             {
                 List<byte> retVal = new List<byte>();
                 string bits = Convert.ToString(value, 2);
@@ -70,32 +290,32 @@ namespace Steganography_Utility
                 }
                 else
                 {
-                    throw new Exception("Not enough bytes to contain the long provided");
+                    throw new Exception("Not enough bytes to contain the int provided");
                 }
                 return retVal;
             }
             else
             {
-                throw new Exception("The number of bytes must be greater than 0 and less than or equal to 8");
+                throw new Exception("The number of bytes must be greater than 0 and less than or equal to 4");
             }
         }
 
         /// <summary>
-        /// Convert an array of bytes into a long using the big endian convention
+        /// Convert an array of bytes into an int using the big endian convention
         /// <para>  For example, pass in { 7, 128 }</para>
         /// <para>  Converting these bytes to binary gives you: 0000 0111 1000 0000</para>
-        /// <para>  Parse that binary as one long and you get 1920</para>
+        /// <para>  Parse that binary as one int and you get 1920</para>
         /// </summary>
-        /// <param name="list">The list of bytes to convert to a long</param>
-        /// <returns>The long obtained from the byte list</returns>
-        static private long bytesToLong(List<byte> list)
+        /// <param name="list">The list of bytes to convert to an int</param>
+        /// <returns>The int obtained from the byte list</returns>
+        static private int bytesToInt(List<byte> list)
         {
             string bits = string.Empty;
             foreach (byte b in list)
             {
                 bits = string.Concat(bits, Convert.ToString(b, 2).PadLeft(8, '0'));
             }
-            return Convert.ToInt64(bits, 2);
+            return Convert.ToInt32(bits, 2);
         }
 
         /// <summary>
@@ -317,8 +537,8 @@ namespace Steganography_Utility
 
             // Create header
             var header = new List<byte>();
-            header.Add(Convert.ToByte(_fileTypeMapping.FirstOrDefault(x => x.Value == Path.GetExtension(filePath)).Key));
-            header.AddRange(longToBytes(fileBytes.Count, 8));
+            header.Add(_fileTypeMapping.FirstOrDefault(x => x.Value == Path.GetExtension(filePath)).Key);
+            header.AddRange(intToBytes(fileBytes.Count, 4));
 
             // Prepend header
             fileBytes.InsertRange(0, header);
@@ -349,13 +569,13 @@ namespace Steganography_Utility
             }
 
             // Get file length
-            long fileLength = bytesToLong(decodedBytes.Skip(1).Take(8).ToList());
+            int fileLength = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
 
             // Remove header
-            decodedBytes.RemoveRange(0, 9);
+            decodedBytes.RemoveRange(0, 5);
 
             // Save file
-            File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.Take((int)fileLength).ToArray());
+            File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.Take(fileLength).ToArray());
         }
 
         #endregion
