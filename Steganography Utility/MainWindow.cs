@@ -56,19 +56,20 @@ namespace Steganography_Utility
                     openFileDialog.Filter = Program._resultImageFilter;
                     break;
             }
-
-            // Only set the text if it is a valid type
-            openFileDialog.ShowDialog();
-            string lowerExtension = Path.GetExtension(openFileDialog.FileName).ToLower();
-            if ((buttonSender.Name == "containerImageBtn" && Program._containerImageTypes.Contains(lowerExtension)) ||
-                (buttonSender.Name == "hiddenFileBtn" && Program._fileTypeMapping.ContainsValue(lowerExtension)) ||
-                (buttonSender.Name == "encodedImageBtn" && Program._resultImageTypes.Contains(lowerExtension)))
-            {
-                textboxSender.Text = openFileDialog.FileName;
-            }
-            else
-            {
-                MessageBox.Show(string.Format("The file type \"{0}\" is not supported.", lowerExtension), "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+  
+            if (openFileDialog.ShowDialog() == DialogResult.OK) {
+                // Only set the text if it is a valid type
+                string lowerExtension = Path.GetExtension(openFileDialog.FileName).ToLower();
+                if ((buttonSender.Name == "containerImageBtn" && Program._containerImageTypes.Contains(lowerExtension)) ||
+                    (buttonSender.Name == "hiddenFileBtn" && Program._fileTypeMapping.ContainsValue(lowerExtension)) ||
+                    (buttonSender.Name == "encodedImageBtn" && Program._resultImageTypes.Contains(lowerExtension)))
+                {
+                    textboxSender.Text = openFileDialog.FileName;
+                }
+                else
+                {
+                    MessageBox.Show(string.Format("The file type \"{0}\" is not supported.", lowerExtension), "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -77,17 +78,19 @@ namespace Steganography_Utility
             Button buttonSender = (Button)sender;
             // Button and textbox must be named <name>Btn and <name>Tb, respectively
             TextBox textboxSender = (TextBox)Controls.Find(buttonSender.Name.Replace("Btn", "Tb"), true)[0];
-
-            // Only set the text if it is a valid type
-            saveFileDialog.ShowDialog();
-            string lowerExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
-            if (Program._resultImageTypes.Contains(lowerExtension))
+    
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                textboxSender.Text = saveFileDialog.FileName;
-            }
-            else
-            {
-                MessageBox.Show(string.Format("The file type \"{0}\" is not supported.", lowerExtension), "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Only set the text if it is a valid type
+                string lowerExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
+                if (Program._resultImageTypes.Contains(lowerExtension))
+                {
+                    textboxSender.Text = saveFileDialog.FileName;
+                }
+                else
+                {
+                    MessageBox.Show(string.Format("The file type \"{0}\" is not supported.", lowerExtension), "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
         #endregion

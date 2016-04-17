@@ -561,21 +561,25 @@ namespace Steganography_Utility
             var encodedBytes = bitmapToBytes(encodedImage);
             var decodedBytes = decodeByteList(encodedBytes);
 
-            // Get file type
-            string fileType = _fileTypeMapping[decodedBytes[0]];
-            if (fileType == null)
+            // Check if we will be able to find the extension
+            if (_fileTypeMapping.ContainsKey(decodedBytes[0]))
             {
-                throw new Exception(string.Format("No hidden file found in {0}", encodedImagePath));
+                // Get file type
+                string fileType = _fileTypeMapping[decodedBytes[0]];
+
+                // Get file length
+                int fileLength = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
+
+                // Remove header
+                decodedBytes.RemoveRange(0, 5);
+
+                // Save file
+                File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.Take(fileLength).ToArray());
             }
-
-            // Get file length
-            int fileLength = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
-
-            // Remove header
-            decodedBytes.RemoveRange(0, 5);
-
-            // Save file
-            File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.Take(fileLength).ToArray());
+            else
+            {
+                throw new Exception(string.Format("The file type \"{0}\" is not supported.", Path.GetExtension(encodedImagePath)));
+            }
         }
 
         #endregion
