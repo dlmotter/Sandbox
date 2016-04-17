@@ -39,34 +39,74 @@ namespace Steganography_Utility
 
         private void GenericFileUpload_Click(object sender, EventArgs e)
         {
-            //TODO: set openFileDialog filter
-
-            openFileDialog.ShowDialog();
-
             Button buttonSender = (Button)sender;
             // Button and textbox must be named <name>Btn and <name>Tb, respectively
             TextBox textboxSender = (TextBox)Controls.Find(buttonSender.Name.Replace("Btn", "Tb"), true)[0];
 
-            textboxSender.Text = openFileDialog.FileName;
+            // Set the filter appropriately
+            switch (buttonSender.Name)
+            {
+                case "containerImageBtn":
+                    openFileDialog.Filter = Program._containerImageFilter;
+                    break;
+                case "hiddenFileBtn":
+                    openFileDialog.Filter = "All Files|*.*";
+                    break;
+                case "encodedImageBtn":
+                    openFileDialog.Filter = Program._resultImageFilter;
+                    break;
+            }
+
+            // Only set the text if it is a valid type
+            openFileDialog.ShowDialog();
+            string lowerExtension = Path.GetExtension(openFileDialog.FileName).ToLower();
+            if ((buttonSender.Name == "containerImageBtn" && Program._containerImageTypes.Contains(lowerExtension)) ||
+                (buttonSender.Name == "hiddenFileBtn" && Program._fileTypeMapping.ContainsValue(lowerExtension)) ||
+                (buttonSender.Name == "encodedImageBtn" && Program._resultImageTypes.Contains(lowerExtension)))
+            {
+                textboxSender.Text = openFileDialog.FileName;
+            }
+            else
+            {
+                MessageBox.Show(string.Format("The file type \"{0}\" is not supported.", lowerExtension), "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void GenericFileSave_Click(object sender, EventArgs e)
         {
-            saveFileDialog.ShowDialog();
-
             Button buttonSender = (Button)sender;
             // Button and textbox must be named <name>Btn and <name>Tb, respectively
             TextBox textboxSender = (TextBox)Controls.Find(buttonSender.Name.Replace("Btn", "Tb"), true)[0];
 
-            textboxSender.Text = saveFileDialog.FileName;
+            // Only set the text if it is a valid type
+            saveFileDialog.ShowDialog();
+            string lowerExtension = Path.GetExtension(saveFileDialog.FileName).ToLower();
+            if (Program._resultImageTypes.Contains(lowerExtension))
+            {
+                textboxSender.Text = saveFileDialog.FileName;
+            }
+            else
+            {
+                MessageBox.Show(string.Format("The file type \"{0}\" is not supported.", lowerExtension), "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         #endregion
 
         #region Drag/drop handlers
         private void GenericTextBox_DragEnter(object sender, DragEventArgs e)
         {
+            TextBox typedSender = (TextBox)sender;
+            string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            string lowerExtension = Path.GetExtension(fileList[0]).ToLower();
+            bool fileIsValid =
+                (typedSender.Name == "containerImageTb" && Program._containerImageTypes.Contains(lowerExtension)) ||
+                (typedSender.Name == "hiddenFileTb" && Program._fileTypeMapping.ContainsValue(lowerExtension)) ||
+                (typedSender.Name == "resultImageTb" && Program._resultImageTypes.Contains(lowerExtension)) ||
+                (typedSender.Name == "encodedImageTb" && Program._resultImageTypes.Contains(lowerExtension));
+                
             // Change the mouse icon depending if the user is trying to drop something legit
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (e.Data.GetDataPresent(DataFormats.FileDrop) && fileIsValid)
             {
                 e.Effect = DragDropEffects.Copy;
             }
@@ -78,11 +118,11 @@ namespace Steganography_Utility
 
         private void GenericTextBox_DragDrop(object sender, DragEventArgs e)
         {
-            string[] FileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             TextBox typedSender = (TextBox)sender;
+            string[] fileList = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
-            // If user dropped multiple files, only take the first one
-            typedSender.Text = FileList[0];
+            // Validation is taken care of in the drag enter handler
+            typedSender.Text = fileList[0];
         }
         #endregion
 

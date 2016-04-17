@@ -57,7 +57,7 @@
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "PNG|*.png|Bitmap|*.bmp";
+            this.saveFileDialog.Filter = "Bitmap|*.bmp|PNG|*.png";
             // 
             // MainTabControl
             // 
@@ -201,13 +201,15 @@
             // noteLbl
             // 
             this.noteLbl.AutoSize = true;
-            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.noteLbl.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.noteLbl.Location = new System.Drawing.Point(12, 60);
+            this.noteLbl.Location = new System.Drawing.Point(12, 47);
             this.noteLbl.Name = "noteLbl";
-            this.noteLbl.Size = new System.Drawing.Size(153, 15);
+            this.noteLbl.Size = new System.Drawing.Size(332, 45);
             this.noteLbl.TabIndex = 12;
-            this.noteLbl.Text = "TODO: Update this text";
+            this.noteLbl.Text = "The decoded file will use the same path as the encoded file.\r\nThe file name will " +
+    "have \"decoded\" appended to it, and will\r\nhave the extension of the original, sec" +
+    "ret file.";
             // 
             // encodedImageTb
             // 
@@ -281,7 +283,6 @@
             this.MaximumSize = new System.Drawing.Size(2048, 256);
             this.MinimumSize = new System.Drawing.Size(534, 256);
             this.Name = "MainWindow";
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Steganography Utility";
             this.MainTabControl.ResumeLayout(false);
             this.encodeTabPage.ResumeLayout(false);
