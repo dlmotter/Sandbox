@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -11,9 +12,25 @@ namespace Steganography_Utility
 {
     static class Program
     {
-        // As I test with more extensions types, these lists will grow
-        private static List<string> _validInputExtensions = new List<string> { ".bmp", ".png", ".jpg", ".jpeg" };
-        private static List<string> _validOutputExtensions = new List<string> { ".bmp", ".png" };
+        private static List<string> _validContainerImageTypes = new List<string> { ".bmp", ".jpg", ".jpeg", ".png" };
+        private static List<string> _validResultImageTypes = new List<string> { ".bmp", ".png" };
+
+        // Try to figure out a better way to do this. Need to be able to save filetype information in one byte
+        private static Dictionary<int, string> _fileTypeMapping = new Dictionary<int, string>()
+        {
+            // 0 - 49 reserved for image files
+            { 0, ".bmp" },
+            { 1, ".jpg" },
+            { 2, ".jpeg" },
+            { 3, ".png" },
+            // 50 - 99 reserved for text files
+            { 50, ".txt" },
+            // 100 - 146 reserved for sound files
+            { 100, ".mp3" },
+            // 150 - 255 reserved for miscellaneous
+            { 150, ".zip" },
+            { 151, ".rar" }
+        };
 
         /// <summary>
         /// The main entry point for the application.
@@ -25,7 +42,7 @@ namespace Steganography_Utility
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
         }
-
+        
         #region Conversion functions
 
         /// <summary>
@@ -235,110 +252,9 @@ namespace Steganography_Utility
             return decodedByteList;
         }
 
-        /// <summary>
-        /// Saves an encoded version of an image. Supported image types are bmp, png, jpg, and jpeg
-        /// </summary>
-        /// <param name="superImagePath">The filepath of the container image</param>
-        /// <param name="subImagePath">The filepath of the secret image</param>
-        /// <param name="resultImagePath">The filepath to save the resultant, encoded image</param>
-        static public void saveEncodedImage(string superImagePath, string subImagePath, string resultImagePath)
-        {
-            validateInputExtensions(superImagePath, subImagePath);
-            validateOutputExtensions(resultImagePath);
+        #endregion
 
-            // The super and sub images don't necessarily have to be .bmp file format.
-            // You can pass a file of any format supported by the Image class to the Bitmap constructor
-            Bitmap superImage = new Bitmap(superImagePath);
-            Bitmap subImage = new Bitmap(subImagePath);
-
-            var superBytes = bitmapToBytes(superImage);
-
-            var subBytes = new List<byte>();
-            subBytes.Add(Convert.ToByte(0));                    // 0 as first secret byte indicates a hidden image (as opposed to text, TBI)
-            subBytes.AddRange(longToBytes(subImage.Width, 4));  // Next 4 secret bytes tell hidden image width
-            subBytes.AddRange(longToBytes(subImage.Height, 4)); // Next 4 secret bytes tell hidden image height
-            subBytes.AddRange(bitmapToBytes(subImage));         // The rest of the secret bytes are the hidden image RGB data
-
-            var encodedBytes = encodeByteList(superBytes, subBytes);
-
-            Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
-            saveBitmap(resultImage, resultImagePath);
-        }
-
-        /// <summary>
-        /// Saves an image encoded with secret text
-        /// </summary>
-        /// <param name="superImagePath"></param>
-        /// <param name="secretText"></param>
-        /// <param name="resultImagePath"></param>
-        static public void saveEncodedText(string superImagePath, string secretText, string resultImagePath)
-        {
-            validateInputExtensions(superImagePath);
-            validateOutputExtensions(resultImagePath);
-
-            Bitmap superImage = new Bitmap(superImagePath);
-            var superBytes = bitmapToBytes(superImage);
-
-            var subBytes = new List<byte>();
-            subBytes.Add(Convert.ToByte(1));                        // 1 as first secret byte indicates hidden text (as opposed to an image)
-            subBytes.AddRange(longToBytes(secretText.Length, 8));   // Next 8 secret bytes indicate text length
-            subBytes.AddRange(Encoding.ASCII.GetBytes(secretText)); // The rest of the secret bytes are the hidden text as ascii bytes
-
-            var encodedBytes = encodeByteList(superBytes, subBytes);
-
-            Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
-            saveBitmap(resultImage, resultImagePath);
-        }
-
-        /// <summary>
-        /// Saves a decoded file
-        /// </summary>
-        /// <param name="encodedImagePath">The filepath of the encoded image</param>
-        /// <param name="resultPath">The filepath to save the resultant, decoded file</param>
-        static public void saveDecodedFile(string encodedImagePath, string resultPath)
-        {
-            validateInputExtensions(encodedImagePath);
-            validateOutputExtensions(resultPath);
-
-            Bitmap encodedImage = new Bitmap(encodedImagePath);
-            var encodedBytes = bitmapToBytes(encodedImage);
-            var decodedBytes = decodeByteList(encodedBytes);
-
-            if (decodedBytes[0] == 0)
-            {
-                // Image
-
-                // Get width and height from header
-                var width = Convert.ToInt32(bytesToLong(decodedBytes.Skip(1).Take(4).ToList()));
-                var height = Convert.ToInt32(bytesToLong(decodedBytes.Skip(5).Take(4).ToList()));
-
-                // Remove header
-                decodedBytes.RemoveRange(0, 9);
-
-                // Save image
-                Bitmap decodedImage = bytesToBitmap(decodedBytes, width, height);
-                saveBitmap(decodedImage, resultPath);
-            }
-            else if (decodedBytes[0] == 1)
-            {
-                // Text
-
-                // Get length of hidden text from header
-                var length = Convert.ToInt32(bytesToLong(decodedBytes.Skip(1).Take(8).ToList()));
-
-                // Remove header
-                decodedBytes.RemoveRange(0, 9);
-
-                // Save text. Use the txt extension no matter what user chose
-                File.WriteAllBytes(Path.ChangeExtension(resultPath, "txt"), decodedBytes.Take(length).ToArray());
-            }
-            else
-            {
-                // Unknown
-
-                throw new Exception("Did not detect encoded data in the file");
-            }
-        }
+        #region Image processing functions
 
         /// <summary>
         /// Gets the ImageFormat property befitting the file passed in. If it's a non-supported type, it returns ImageFormat.Bmp.
@@ -354,9 +270,6 @@ namespace Steganography_Utility
                 {
                     case @".bmp":
                         return ImageFormat.Bmp;
-                    case @".jpg":
-                    case @".jpeg":
-                        return ImageFormat.Jpeg;
                     case @".png":
                         return ImageFormat.Png;
                     default:
@@ -376,12 +289,6 @@ namespace Steganography_Utility
         /// <param name="filePath">The path to save the file, including the filename and extension</param>
         static private void saveBitmap(Bitmap image, string filePath)
         {
-            // If no extension is specified, use png
-            if (string.IsNullOrEmpty(Path.GetExtension(filePath)) || Path.GetExtension(filePath) == ".txt")
-            {
-                filePath = Path.ChangeExtension(filePath, "png");
-            }
-
             using (MemoryStream memory = new MemoryStream())
             {
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
@@ -394,30 +301,63 @@ namespace Steganography_Utility
         }
 
         /// <summary>
-        /// Validates that all input files have officially supported extensions
+        /// Saves an encoded version of an image. Supported image types are bmp, png, jpg, and jpeg
         /// </summary>
-        /// <param name="paths">Any number of full filepaths as strings</param>
-        static private void validateInputExtensions(params string[] paths)
+        /// <param name="superImagePath">The filepath of the container image</param>
+        /// <param name="subImagePath">The filepath of the secret image</param>
+        /// <param name="resultImagePath">The filepath to save the resultant, encoded image</param>
+        static public void saveEncodedFile(string superImagePath, string filePath, string resultImagePath)
         {
-            List<string> invalidPaths = paths.Where(path => !_validInputExtensions.Contains(Path.GetExtension(path))).ToList();
-            if (invalidPaths.Count > 0)
-            {
-                throw new Exception(string.Format("All input file extensions must be one of these types: {0}", string.Join(", ", _validInputExtensions)));
-            }
+            // Get super bytes
+            Bitmap superImage = new Bitmap(superImagePath);
+            var superBytes = bitmapToBytes(superImage);
+
+            // Get file bytes
+            var fileBytes = File.ReadAllBytes(filePath).ToList();
+
+            // Create header
+            var header = new List<byte>();
+            header.Add(Convert.ToByte(_fileTypeMapping.FirstOrDefault(x => x.Value == Path.GetExtension(filePath)).Key));
+            header.AddRange(longToBytes(fileBytes.Count, 8));
+
+            // Prepend header
+            fileBytes.InsertRange(0, header);
+
+            // Save image
+            var encodedBytes = encodeByteList(superBytes, fileBytes);
+            Bitmap resultImage = bytesToBitmap(encodedBytes, superImage.Width, superImage.Height);
+            saveBitmap(resultImage, resultImagePath);
         }
 
         /// <summary>
-        /// Validates that all output files have officially supported extensions
+        /// Saves a decoded file
         /// </summary>
-        /// <param name="paths">Any number of full filepaths as strings</param>
-        static private void validateOutputExtensions(params string[] paths)
+        /// <param name="encodedImagePath">The filepath of the encoded image</param>
+        /// <param name="resultPath">The filepath to save the resultant, decoded file</param>
+        static public void saveDecodedFile(string encodedImagePath)
         {
-            List<string> invalidPaths = paths.Where(path => !_validOutputExtensions.Contains(Path.GetExtension(path))).ToList();
-            if (invalidPaths.Count > 0)
+            // Get decoded bytes
+            Bitmap encodedImage = new Bitmap(encodedImagePath);
+            var encodedBytes = bitmapToBytes(encodedImage);
+            var decodedBytes = decodeByteList(encodedBytes);
+
+            // Get file type
+            string fileType = _fileTypeMapping[decodedBytes[0]];
+            if (fileType == null)
             {
-                throw new Exception(string.Format("All result file extensions must be one of these types: {0}", string.Join(", ", _validOutputExtensions)));
+                throw new Exception(string.Format("No hidden file found in {0}", encodedImagePath));
             }
+
+            // Get file length
+            long fileLength = bytesToLong(decodedBytes.Skip(1).Take(8).ToList());
+
+            // Remove header
+            decodedBytes.RemoveRange(0, 9);
+
+            // Save file
+            File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.Take((int)fileLength).ToArray());
         }
+
         #endregion
     }
 }

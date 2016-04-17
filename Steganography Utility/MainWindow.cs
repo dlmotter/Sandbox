@@ -20,8 +20,8 @@ namespace Steganography_Utility
             containerImageTb.DragEnter += GenericTextBox_DragEnter;
             containerImageTb.DragDrop += GenericTextBox_DragDrop;
 
-            hiddenImageTb.DragEnter += GenericTextBox_DragEnter;
-            hiddenImageTb.DragDrop += GenericTextBox_DragDrop;
+            hiddenFileTb.DragEnter += GenericTextBox_DragEnter;
+            hiddenFileTb.DragDrop += GenericTextBox_DragDrop;
 
             resultImageTb.DragEnter += GenericTextBox_DragEnter;
             resultImageTb.DragDrop += GenericTextBox_DragDrop;
@@ -29,16 +29,6 @@ namespace Steganography_Utility
             //   Decode tab
             encodedImageTb.DragEnter += GenericTextBox_DragEnter;
             encodedImageTb.DragDrop += GenericTextBox_DragDrop;
-
-            decodedImageTb.DragEnter += GenericTextBox_DragEnter;
-            decodedImageTb.DragDrop += GenericTextBox_DragDrop;
-        }
-
-        private void hiddenTextRb_CheckedChanged(object sender, EventArgs e)
-        {
-            hiddenTextTb.Enabled = hiddenTextRb.Checked;
-            hiddenImageBtn.Enabled = !hiddenTextRb.Checked;
-            hiddenImageTb.Enabled = !hiddenTextRb.Checked;
         }
 
         #region Button clicks
@@ -49,6 +39,8 @@ namespace Steganography_Utility
 
         private void GenericFileUpload_Click(object sender, EventArgs e)
         {
+            //TODO: set openFileDialog filter
+
             openFileDialog.ShowDialog();
 
             Button buttonSender = (Button)sender;
@@ -108,17 +100,13 @@ namespace Steganography_Utility
             // the RunWorkerCompletedEventArgs object in the callback function will have a meaningful Error property
 
             // Since there's only one background worker, check to see which function we are supposed to do
-            if ((string)e.Argument == "encodeImage")
+            if ((string)e.Argument == "encode")
             {
-                Program.saveEncodedImage(containerImageTb.Text, hiddenImageTb.Text, resultImageTb.Text);
-            }
-            else if ((string)e.Argument == "encodeText")
-            {
-                Program.saveEncodedText(containerImageTb.Text, hiddenTextTb.Text, resultImageTb.Text);
+                Program.saveEncodedFile(containerImageTb.Text, hiddenFileTb.Text, resultImageTb.Text);
             }
             else if ((string)e.Argument == "decode")
             {
-                Program.saveDecodedFile(encodedImageTb.Text, decodedImageTb.Text);
+                Program.saveDecodedFile(encodedImageTb.Text);
             }
             else
             {
@@ -141,14 +129,7 @@ namespace Steganography_Utility
             string arg;
             if (MainTabControl.SelectedTab.Name == "encodeTabPage")
             {
-                if (hiddenImageRb.Checked)
-                {
-                    arg = "encodeImage";
-                }
-                else
-                {
-                    arg = "encodeText";
-                }
+                arg = "encode";
             }
             else
             {
@@ -165,7 +146,7 @@ namespace Steganography_Utility
             {
                 if (openFolderCb.Checked)
                 {
-                    string directory = MainTabControl.SelectedTab.Name == "encodeTabPage" ? Path.GetDirectoryName(resultImageTb.Text) : Path.GetDirectoryName(decodedImageTb.Text);
+                    string directory = MainTabControl.SelectedTab.Name == "encodeTabPage" ? Path.GetDirectoryName(resultImageTb.Text) : Path.GetDirectoryName(encodedImageTb.Text);
                     Process.Start(directory);
                 }
             }

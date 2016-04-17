@@ -29,32 +29,27 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.MainTabControl = new System.Windows.Forms.TabControl();
             this.encodeTabPage = new System.Windows.Forms.TabPage();
+            this.hiddenFileLbl = new System.Windows.Forms.Label();
             this.resultImageTb = new System.Windows.Forms.TextBox();
             this.resultImageBtn = new System.Windows.Forms.Button();
             this.resultImageLbl = new System.Windows.Forms.Label();
             this.containerLbl = new System.Windows.Forms.Label();
             this.containerImageTb = new System.Windows.Forms.TextBox();
             this.containerImageBtn = new System.Windows.Forms.Button();
-            this.hiddenTextTb = new System.Windows.Forms.TextBox();
-            this.hiddenImageBtn = new System.Windows.Forms.Button();
-            this.hiddenImageTb = new System.Windows.Forms.TextBox();
-            this.hiddenTextRb = new System.Windows.Forms.RadioButton();
-            this.hiddenImageRb = new System.Windows.Forms.RadioButton();
+            this.hiddenFileBtn = new System.Windows.Forms.Button();
+            this.hiddenFileTb = new System.Windows.Forms.TextBox();
             this.decodeTabPage = new System.Windows.Forms.TabPage();
             this.noteLbl = new System.Windows.Forms.Label();
-            this.decodedImageTb = new System.Windows.Forms.TextBox();
-            this.decodedImageBtn = new System.Windows.Forms.Button();
-            this.decodedImageLbl = new System.Windows.Forms.Label();
             this.encodedImageTb = new System.Windows.Forms.TextBox();
             this.encodedImageBtn = new System.Windows.Forms.Button();
             this.encodedImageLbl = new System.Windows.Forms.Label();
             this.goBtn = new System.Windows.Forms.Button();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.openFolderCb = new System.Windows.Forms.CheckBox();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.MainTabControl.SuspendLayout();
             this.encodeTabPage.SuspendLayout();
             this.decodeTabPage.SuspendLayout();
@@ -62,7 +57,7 @@
             // 
             // saveFileDialog
             // 
-            this.saveFileDialog.Filter = "PNG|*.png|Bitmap|*.bmp|JPEG|*.jpg,*.jpeg";
+            this.saveFileDialog.Filter = "PNG|*.png|Bitmap|*.bmp";
             // 
             // MainTabControl
             // 
@@ -74,36 +69,43 @@
             this.MainTabControl.Location = new System.Drawing.Point(13, 13);
             this.MainTabControl.Name = "MainTabControl";
             this.MainTabControl.SelectedIndex = 0;
-            this.MainTabControl.Size = new System.Drawing.Size(493, 219);
+            this.MainTabControl.Size = new System.Drawing.Size(493, 163);
             this.MainTabControl.TabIndex = 5;
             // 
             // encodeTabPage
             // 
+            this.encodeTabPage.Controls.Add(this.hiddenFileLbl);
             this.encodeTabPage.Controls.Add(this.resultImageTb);
             this.encodeTabPage.Controls.Add(this.resultImageBtn);
             this.encodeTabPage.Controls.Add(this.resultImageLbl);
             this.encodeTabPage.Controls.Add(this.containerLbl);
             this.encodeTabPage.Controls.Add(this.containerImageTb);
             this.encodeTabPage.Controls.Add(this.containerImageBtn);
-            this.encodeTabPage.Controls.Add(this.hiddenTextTb);
-            this.encodeTabPage.Controls.Add(this.hiddenImageBtn);
-            this.encodeTabPage.Controls.Add(this.hiddenImageTb);
-            this.encodeTabPage.Controls.Add(this.hiddenTextRb);
-            this.encodeTabPage.Controls.Add(this.hiddenImageRb);
+            this.encodeTabPage.Controls.Add(this.hiddenFileBtn);
+            this.encodeTabPage.Controls.Add(this.hiddenFileTb);
             this.encodeTabPage.Location = new System.Drawing.Point(4, 22);
             this.encodeTabPage.Name = "encodeTabPage";
             this.encodeTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.encodeTabPage.Size = new System.Drawing.Size(485, 193);
+            this.encodeTabPage.Size = new System.Drawing.Size(485, 137);
             this.encodeTabPage.TabIndex = 0;
             this.encodeTabPage.Text = "Encode";
             this.encodeTabPage.UseVisualStyleBackColor = true;
+            // 
+            // hiddenFileLbl
+            // 
+            this.hiddenFileLbl.AutoSize = true;
+            this.hiddenFileLbl.Location = new System.Drawing.Point(6, 47);
+            this.hiddenFileLbl.Name = "hiddenFileLbl";
+            this.hiddenFileLbl.Size = new System.Drawing.Size(60, 13);
+            this.hiddenFileLbl.TabIndex = 4;
+            this.hiddenFileLbl.Text = "Hidden File";
             // 
             // resultImageTb
             // 
             this.resultImageTb.AllowDrop = true;
             this.resultImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.resultImageTb.Location = new System.Drawing.Point(96, 65);
+            this.resultImageTb.Location = new System.Drawing.Point(96, 107);
             this.resultImageTb.Name = "resultImageTb";
             this.resultImageTb.ReadOnly = true;
             this.resultImageTb.Size = new System.Drawing.Size(383, 20);
@@ -112,7 +114,7 @@
             // 
             // resultImageBtn
             // 
-            this.resultImageBtn.Location = new System.Drawing.Point(15, 63);
+            this.resultImageBtn.Location = new System.Drawing.Point(15, 105);
             this.resultImageBtn.Name = "resultImageBtn";
             this.resultImageBtn.Size = new System.Drawing.Size(75, 23);
             this.resultImageBtn.TabIndex = 2;
@@ -123,7 +125,7 @@
             // resultImageLbl
             // 
             this.resultImageLbl.AutoSize = true;
-            this.resultImageLbl.Location = new System.Drawing.Point(6, 47);
+            this.resultImageLbl.Location = new System.Drawing.Point(6, 89);
             this.resultImageLbl.Name = "resultImageLbl";
             this.resultImageLbl.Size = new System.Drawing.Size(69, 13);
             this.resultImageLbl.TabIndex = 0;
@@ -160,76 +162,38 @@
             this.containerImageBtn.UseVisualStyleBackColor = true;
             this.containerImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
             // 
-            // hiddenTextTb
+            // hiddenFileBtn
             // 
-            this.hiddenTextTb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.hiddenFileBtn.Location = new System.Drawing.Point(15, 63);
+            this.hiddenFileBtn.Name = "hiddenFileBtn";
+            this.hiddenFileBtn.Size = new System.Drawing.Size(75, 23);
+            this.hiddenFileBtn.TabIndex = 3;
+            this.hiddenFileBtn.Text = "Choose...";
+            this.hiddenFileBtn.UseVisualStyleBackColor = true;
+            this.hiddenFileBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
+            // 
+            // hiddenFileTb
+            // 
+            this.hiddenFileTb.AllowDrop = true;
+            this.hiddenFileTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.hiddenTextTb.Enabled = false;
-            this.hiddenTextTb.Location = new System.Drawing.Point(15, 167);
-            this.hiddenTextTb.Multiline = true;
-            this.hiddenTextTb.Name = "hiddenTextTb";
-            this.hiddenTextTb.Size = new System.Drawing.Size(464, 20);
-            this.hiddenTextTb.TabIndex = 4;
-            // 
-            // hiddenImageBtn
-            // 
-            this.hiddenImageBtn.Location = new System.Drawing.Point(15, 115);
-            this.hiddenImageBtn.Name = "hiddenImageBtn";
-            this.hiddenImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.hiddenImageBtn.TabIndex = 3;
-            this.hiddenImageBtn.Text = "Choose...";
-            this.hiddenImageBtn.UseVisualStyleBackColor = true;
-            this.hiddenImageBtn.Click += new System.EventHandler(this.GenericFileUpload_Click);
-            // 
-            // hiddenImageTb
-            // 
-            this.hiddenImageTb.AllowDrop = true;
-            this.hiddenImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hiddenImageTb.Location = new System.Drawing.Point(96, 118);
-            this.hiddenImageTb.Name = "hiddenImageTb";
-            this.hiddenImageTb.ReadOnly = true;
-            this.hiddenImageTb.Size = new System.Drawing.Size(383, 20);
-            this.hiddenImageTb.TabIndex = 0;
-            this.hiddenImageTb.TabStop = false;
-            // 
-            // hiddenTextRb
-            // 
-            this.hiddenTextRb.AutoSize = true;
-            this.hiddenTextRb.Location = new System.Drawing.Point(6, 144);
-            this.hiddenTextRb.Name = "hiddenTextRb";
-            this.hiddenTextRb.Size = new System.Drawing.Size(273, 17);
-            this.hiddenTextRb.TabIndex = 99;
-            this.hiddenTextRb.Text = "Hidden Text (ASCII only) (Ctrl+Enter to start new line)";
-            this.hiddenTextRb.UseVisualStyleBackColor = true;
-            this.hiddenTextRb.CheckedChanged += new System.EventHandler(this.hiddenTextRb_CheckedChanged);
-            // 
-            // hiddenImageRb
-            // 
-            this.hiddenImageRb.AutoSize = true;
-            this.hiddenImageRb.Checked = true;
-            this.hiddenImageRb.Location = new System.Drawing.Point(6, 92);
-            this.hiddenImageRb.Name = "hiddenImageRb";
-            this.hiddenImageRb.Size = new System.Drawing.Size(91, 17);
-            this.hiddenImageRb.TabIndex = 99;
-            this.hiddenImageRb.TabStop = true;
-            this.hiddenImageRb.Text = "Hidden Image";
-            this.hiddenImageRb.UseVisualStyleBackColor = true;
+            this.hiddenFileTb.Location = new System.Drawing.Point(96, 65);
+            this.hiddenFileTb.Name = "hiddenFileTb";
+            this.hiddenFileTb.ReadOnly = true;
+            this.hiddenFileTb.Size = new System.Drawing.Size(383, 20);
+            this.hiddenFileTb.TabIndex = 0;
+            this.hiddenFileTb.TabStop = false;
             // 
             // decodeTabPage
             // 
             this.decodeTabPage.Controls.Add(this.noteLbl);
-            this.decodeTabPage.Controls.Add(this.decodedImageTb);
-            this.decodeTabPage.Controls.Add(this.decodedImageBtn);
-            this.decodeTabPage.Controls.Add(this.decodedImageLbl);
             this.decodeTabPage.Controls.Add(this.encodedImageTb);
             this.decodeTabPage.Controls.Add(this.encodedImageBtn);
             this.decodeTabPage.Controls.Add(this.encodedImageLbl);
             this.decodeTabPage.Location = new System.Drawing.Point(4, 22);
             this.decodeTabPage.Name = "decodeTabPage";
             this.decodeTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.decodeTabPage.Size = new System.Drawing.Size(485, 193);
+            this.decodeTabPage.Size = new System.Drawing.Size(485, 137);
             this.decodeTabPage.TabIndex = 1;
             this.decodeTabPage.Text = "Decode";
             this.decodeTabPage.UseVisualStyleBackColor = true;
@@ -239,43 +203,11 @@
             this.noteLbl.AutoSize = true;
             this.noteLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.noteLbl.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.noteLbl.Location = new System.Drawing.Point(12, 98);
+            this.noteLbl.Location = new System.Drawing.Point(12, 60);
             this.noteLbl.Name = "noteLbl";
-            this.noteLbl.Size = new System.Drawing.Size(432, 15);
+            this.noteLbl.Size = new System.Drawing.Size(153, 15);
             this.noteLbl.TabIndex = 12;
-            this.noteLbl.Text = "If the decoded data is text, it will be saved as a .txt no matter what.";
-            // 
-            // decodedImageTb
-            // 
-            this.decodedImageTb.AllowDrop = true;
-            this.decodedImageTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.decodedImageTb.Location = new System.Drawing.Point(96, 65);
-            this.decodedImageTb.Name = "decodedImageTb";
-            this.decodedImageTb.ReadOnly = true;
-            this.decodedImageTb.Size = new System.Drawing.Size(383, 20);
-            this.decodedImageTb.TabIndex = 0;
-            this.decodedImageTb.TabStop = false;
-            // 
-            // decodedImageBtn
-            // 
-            this.decodedImageBtn.Location = new System.Drawing.Point(15, 63);
-            this.decodedImageBtn.Name = "decodedImageBtn";
-            this.decodedImageBtn.Size = new System.Drawing.Size(75, 23);
-            this.decodedImageBtn.TabIndex = 7;
-            this.decodedImageBtn.Text = "Choose...";
-            this.decodedImageBtn.UseVisualStyleBackColor = true;
-            this.decodedImageBtn.Click += new System.EventHandler(this.GenericFileSave_Click);
-            // 
-            // decodedImageLbl
-            // 
-            this.decodedImageLbl.AutoSize = true;
-            this.decodedImageLbl.Location = new System.Drawing.Point(6, 47);
-            this.decodedImageLbl.Name = "decodedImageLbl";
-            this.decodedImageLbl.Size = new System.Drawing.Size(70, 13);
-            this.decodedImageLbl.TabIndex = 9;
-            this.decodedImageLbl.Text = "Decoded File";
-            this.decodedImageLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.noteLbl.Text = "TODO: Update this text";
             // 
             // encodedImageTb
             // 
@@ -311,7 +243,7 @@
             // goBtn
             // 
             this.goBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.goBtn.Location = new System.Drawing.Point(431, 238);
+            this.goBtn.Location = new System.Drawing.Point(431, 182);
             this.goBtn.Name = "goBtn";
             this.goBtn.Size = new System.Drawing.Size(75, 23);
             this.goBtn.TabIndex = 8;
@@ -329,7 +261,7 @@
             this.openFolderCb.AutoSize = true;
             this.openFolderCb.Checked = true;
             this.openFolderCb.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.openFolderCb.Location = new System.Drawing.Point(23, 242);
+            this.openFolderCb.Location = new System.Drawing.Point(23, 186);
             this.openFolderCb.Name = "openFolderCb";
             this.openFolderCb.Size = new System.Drawing.Size(201, 17);
             this.openFolderCb.TabIndex = 9;
@@ -341,12 +273,13 @@
             this.AcceptButton = this.goBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(518, 273);
+            this.ClientSize = new System.Drawing.Size(518, 217);
             this.Controls.Add(this.openFolderCb);
             this.Controls.Add(this.goBtn);
             this.Controls.Add(this.MainTabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(534, 312);
+            this.MaximumSize = new System.Drawing.Size(2048, 256);
+            this.MinimumSize = new System.Drawing.Size(534, 256);
             this.Name = "MainWindow";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "Steganography Utility";
@@ -361,17 +294,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.TabControl MainTabControl;
         private System.Windows.Forms.TabPage decodeTabPage;
         private System.Windows.Forms.TabPage encodeTabPage;
-        private System.Windows.Forms.Button hiddenImageBtn;
-        private System.Windows.Forms.TextBox hiddenImageTb;
-        private System.Windows.Forms.RadioButton hiddenTextRb;
-        private System.Windows.Forms.RadioButton hiddenImageRb;
-        private System.Windows.Forms.TextBox hiddenTextTb;
+        private System.Windows.Forms.Button hiddenFileBtn;
+        private System.Windows.Forms.TextBox hiddenFileTb;
         private System.Windows.Forms.TextBox containerImageTb;
         private System.Windows.Forms.Button containerImageBtn;
         private System.Windows.Forms.Label containerLbl;
@@ -379,15 +307,14 @@
         private System.Windows.Forms.Label encodedImageLbl;
         private System.Windows.Forms.TextBox encodedImageTb;
         private System.Windows.Forms.Button encodedImageBtn;
-        private System.Windows.Forms.Label decodedImageLbl;
-        private System.Windows.Forms.TextBox decodedImageTb;
-        private System.Windows.Forms.Button decodedImageBtn;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.TextBox resultImageTb;
         private System.Windows.Forms.Button resultImageBtn;
         private System.Windows.Forms.Label resultImageLbl;
         private System.Windows.Forms.Label noteLbl;
         private System.Windows.Forms.CheckBox openFolderCb;
+        private System.Windows.Forms.Label hiddenFileLbl;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }
 
