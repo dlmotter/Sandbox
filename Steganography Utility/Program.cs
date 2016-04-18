@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -474,6 +475,47 @@ namespace Steganography_Utility
 
         #endregion
 
+        #region Compression/Decompression functions
+
+        /// <summary>
+        /// Compress a list of bytes
+        /// </summary>
+        /// <param name="bytes">The list of bytes to compress</param>
+        /// <returns>The compressed list of bytes</returns>
+        static private List<byte> compressByteList(List<byte> bytes)
+        {
+            using (MemoryStream byteStream = new MemoryStream())
+            {
+                using (DeflateStream compressionStream = new DeflateStream(byteStream, CompressionMode.Compress))
+                {
+                    compressionStream.Write(bytes.ToArray(), 0, bytes.Count);
+                }
+                return byteStream.ToArray().ToList();
+            }
+        }
+
+        /// <summary>
+        /// Decompress a list of bytes
+        /// </summary>
+        /// <param name="bytes">The list of bytes to decompress</param>
+        /// <returns>The decompressed list of bytes</returns>
+        static private List<byte> decompressByteList(List<byte> bytes)
+        {
+            using (MemoryStream outputStream = new MemoryStream())
+            {
+                using (MemoryStream byteStream = new MemoryStream(bytes.ToArray()))
+                {
+                    using (DeflateStream decompressionStream = new DeflateStream(byteStream, CompressionMode.Decompress))
+                    {
+                        decompressionStream.CopyTo(outputStream);
+                    }
+                }
+                return outputStream.ToArray().ToList();
+            }
+        }
+
+        #endregion
+
         #region Image processing functions
 
         /// <summary>
@@ -532,8 +574,9 @@ namespace Steganography_Utility
             Bitmap superImage = new Bitmap(superImagePath);
             var superBytes = bitmapToBytes(superImage);
 
-            // Get file bytes
+            // Get and compress file bytes
             var fileBytes = File.ReadAllBytes(filePath).ToList();
+            fileBytes = compressByteList(fileBytes);
 
             // Create header
             var header = new List<byte>();
@@ -570,11 +613,15 @@ namespace Steganography_Utility
                 // Get file length
                 int fileLength = bytesToInt(decodedBytes.Skip(1).Take(4).ToList());
 
-                // Remove header
+                // Remove excess bytes (header and extraneous bytes off the end)
                 decodedBytes.RemoveRange(0, 5);
+                decodedBytes = decodedBytes.Take(fileLength).ToList();
+
+                // Decompress bytes to get final byte list
+                decodedBytes = decompressByteList(decodedBytes);
 
                 // Save file
-                File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.Take(fileLength).ToArray());
+                File.WriteAllBytes(Path.ChangeExtension(encodedImagePath, "decoded" + fileType), decodedBytes.ToArray());
             }
             else
             {
