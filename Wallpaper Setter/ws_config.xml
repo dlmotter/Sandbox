@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <type>Wallpaper of the Day</type>
+  <category></category>
+  <filter></filter>
+  <frequency>Daily</frequency>
+  <file>%USERPROFILE%\daily_wallpaper.bmp</file>
+  <keep>true</keep>
+</settings>
