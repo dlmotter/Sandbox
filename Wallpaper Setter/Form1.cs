@@ -10,8 +10,8 @@ namespace Wallpaper_Setter
     public partial class Form1 : Form
     {
         // TODO unhardcode these
-        private const string configPath = @"C:\GitHubRepos\Sandbox\Wallpaper Setter\ws_config.xml";
-        private const string utilPath = @"C:\GitHubRepos\Sandbox\ws_util\bin\Debug\ws_util.exe";
+        private const string configPath = @"ws_config.xml";
+        private const string utilPath = @"ws_util.exe";
 
         public Form1()
         {

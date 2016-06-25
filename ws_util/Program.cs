@@ -10,7 +10,7 @@ namespace ws_util
     class Program
     {
         // TODO unhardcode this
-        private const string configPath = @"C:\GitHubRepos\Sandbox\Wallpaper Setter\ws_config.xml";
+        private const string configPath = "ws_config.xml";
         public const string baseURL = "http://www.thepaperwall.com";
 
         private static Dictionary<string, string> catDict = new Dictionary<string, string>() {
