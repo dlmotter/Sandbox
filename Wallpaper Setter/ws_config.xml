@@ -5,5 +5,5 @@
   <filter></filter>
   <frequency>Daily</frequency>
   <file>%USERPROFILE%\daily_wallpaper.bmp</file>
-  <keep>true</keep>
+  <keep>Yes</keep>
 </settings>

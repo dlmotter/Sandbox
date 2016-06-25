@@ -38,6 +38,12 @@
             this.frequencyLbl = new System.Windows.Forms.Label();
             this.frequencyDdl = new System.Windows.Forms.ComboBox();
             this.saveBtn = new System.Windows.Forms.Button();
+            this.fileTb = new System.Windows.Forms.TextBox();
+            this.fileLbl = new System.Windows.Forms.Label();
+            this.fileBtn = new System.Windows.Forms.Button();
+            this.keepFileDdl = new System.Windows.Forms.ComboBox();
+            this.keepFileLbl = new System.Windows.Forms.Label();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // filterDdl
@@ -51,7 +57,7 @@
             "Popular"});
             this.filterDdl.Location = new System.Drawing.Point(79, 66);
             this.filterDdl.Name = "filterDdl";
-            this.filterDdl.Size = new System.Drawing.Size(300, 21);
+            this.filterDdl.Size = new System.Drawing.Size(442, 21);
             this.filterDdl.TabIndex = 3;
             // 
             // categoryDdl
@@ -97,7 +103,7 @@
             "War/Military"});
             this.categoryDdl.Location = new System.Drawing.Point(79, 39);
             this.categoryDdl.Name = "categoryDdl";
-            this.categoryDdl.Size = new System.Drawing.Size(300, 21);
+            this.categoryDdl.Size = new System.Drawing.Size(442, 21);
             this.categoryDdl.TabIndex = 2;
             // 
             // typeDdl
@@ -111,7 +117,7 @@
             "Category"});
             this.typeDdl.Location = new System.Drawing.Point(79, 12);
             this.typeDdl.Name = "typeDdl";
-            this.typeDdl.Size = new System.Drawing.Size(300, 21);
+            this.typeDdl.Size = new System.Drawing.Size(442, 21);
             this.typeDdl.TabIndex = 1;
             this.typeDdl.SelectedIndexChanged += new System.EventHandler(this.typeDdl_SelectedIndexChanged);
             // 
@@ -162,13 +168,13 @@
             "Hourly"});
             this.frequencyDdl.Location = new System.Drawing.Point(79, 93);
             this.frequencyDdl.Name = "frequencyDdl";
-            this.frequencyDdl.Size = new System.Drawing.Size(300, 21);
+            this.frequencyDdl.Size = new System.Drawing.Size(442, 21);
             this.frequencyDdl.TabIndex = 5;
             // 
             // saveBtn
             // 
             this.saveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveBtn.Location = new System.Drawing.Point(304, 128);
+            this.saveBtn.Location = new System.Drawing.Point(446, 183);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(75, 23);
             this.saveBtn.TabIndex = 6;
@@ -176,11 +182,74 @@
             this.saveBtn.UseVisualStyleBackColor = true;
             this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
+            // fileTb
+            // 
+            this.fileTb.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileTb.Enabled = false;
+            this.fileTb.Location = new System.Drawing.Point(157, 120);
+            this.fileTb.Name = "fileTb";
+            this.fileTb.ReadOnly = true;
+            this.fileTb.Size = new System.Drawing.Size(364, 20);
+            this.fileTb.TabIndex = 7;
+            // 
+            // fileLbl
+            // 
+            this.fileLbl.AutoSize = true;
+            this.fileLbl.Location = new System.Drawing.Point(12, 123);
+            this.fileLbl.Name = "fileLbl";
+            this.fileLbl.Size = new System.Drawing.Size(23, 13);
+            this.fileLbl.TabIndex = 8;
+            this.fileLbl.Text = "File";
+            // 
+            // fileBtn
+            // 
+            this.fileBtn.Location = new System.Drawing.Point(78, 119);
+            this.fileBtn.Name = "fileBtn";
+            this.fileBtn.Size = new System.Drawing.Size(73, 22);
+            this.fileBtn.TabIndex = 9;
+            this.fileBtn.Text = "Choose...";
+            this.fileBtn.UseVisualStyleBackColor = true;
+            this.fileBtn.Click += new System.EventHandler(this.fileBtn_Click);
+            // 
+            // keepFileDdl
+            // 
+            this.keepFileDdl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.keepFileDdl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.keepFileDdl.FormattingEnabled = true;
+            this.keepFileDdl.Items.AddRange(new object[] {
+            "Yes",
+            "No"});
+            this.keepFileDdl.Location = new System.Drawing.Point(79, 147);
+            this.keepFileDdl.Name = "keepFileDdl";
+            this.keepFileDdl.Size = new System.Drawing.Size(442, 21);
+            this.keepFileDdl.TabIndex = 10;
+            // 
+            // keepFileLbl
+            // 
+            this.keepFileLbl.AutoSize = true;
+            this.keepFileLbl.Location = new System.Drawing.Point(12, 150);
+            this.keepFileLbl.Name = "keepFileLbl";
+            this.keepFileLbl.Size = new System.Drawing.Size(57, 13);
+            this.keepFileLbl.TabIndex = 11;
+            this.keepFileLbl.Text = "Keep File?";
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "bmp";
+            this.saveFileDialog1.Filter = "Bitmap Files (*.bmp)|*.bmp";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(391, 163);
+            this.ClientSize = new System.Drawing.Size(533, 218);
+            this.Controls.Add(this.keepFileLbl);
+            this.Controls.Add(this.keepFileDdl);
+            this.Controls.Add(this.fileBtn);
+            this.Controls.Add(this.fileLbl);
+            this.Controls.Add(this.fileTb);
             this.Controls.Add(this.saveBtn);
             this.Controls.Add(this.frequencyDdl);
             this.Controls.Add(this.frequencyLbl);
@@ -209,6 +278,12 @@
         private System.Windows.Forms.Label frequencyLbl;
         private System.Windows.Forms.ComboBox frequencyDdl;
         private System.Windows.Forms.Button saveBtn;
+        private System.Windows.Forms.TextBox fileTb;
+        private System.Windows.Forms.Label fileLbl;
+        private System.Windows.Forms.Button fileBtn;
+        private System.Windows.Forms.ComboBox keepFileDdl;
+        private System.Windows.Forms.Label keepFileLbl;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 

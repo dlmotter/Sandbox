@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32.TaskScheduler;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -6,8 +9,9 @@ namespace Wallpaper_Setter
 {
     public partial class Form1 : Form
     {
-        // TODO unhardcode this
+        // TODO unhardcode these
         private const string configPath = @"C:\GitHubRepos\Sandbox\Wallpaper Setter\ws_config.xml";
+        private const string utilPath = @"C:\GitHubRepos\Sandbox\ws_util\bin\Debug\ws_util.exe";
 
         public Form1()
         {
@@ -15,6 +19,7 @@ namespace Wallpaper_Setter
             parseConfig(false);
         }
 
+        #region Event Handlers
         private void typeDdl_SelectedIndexChanged(object sender, EventArgs e)
         {
             categoryDdl.Enabled = typeDdl.Text == "Category";
@@ -36,10 +41,22 @@ namespace Wallpaper_Setter
             }
         }
 
-        /// <summary>
-        /// Read of write from/to the config file
-        /// </summary>
-        /// <param name="saving">Whether or not to save the form or read from it</param>
+        private void fileBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                saveFileDialog1.InitialDirectory = Path.GetDirectoryName(fileTb.Text);
+            }
+            catch (Exception ex)
+            {
+                saveFileDialog1.InitialDirectory = "%USERPROFILE%";
+            }
+
+            saveFileDialog1.ShowDialog();
+            fileTb.Text = saveFileDialog1.FileName;
+        }
+        #endregion
+
         private void parseConfig(bool saving)
         {
             try
@@ -64,6 +81,12 @@ namespace Wallpaper_Setter
                             case "frequency":
                                 elem.Value = frequencyDdl.Text;
                                 break;
+                            case "file":
+                                elem.Value = fileTb.Text;
+                                break;
+                            case "keep":
+                                elem.Value = keepFileDdl.Text;
+                                break;
                         }
                     }
                     else
@@ -82,6 +105,12 @@ namespace Wallpaper_Setter
                             case "frequency":
                                 frequencyDdl.Text = elem.Value.Trim().Length == 0 ? "Daily" : elem.Value;
                                 break;
+                            case "file":
+                                fileTb.Text = Environment.ExpandEnvironmentVariables(elem.Value);
+                                break;
+                            case "keep":
+                                keepFileDdl.Text = elem.Value;
+                                break;
                         }
                     }
                 }
@@ -97,12 +126,42 @@ namespace Wallpaper_Setter
             }
         }
 
-        /// <summary>
-        /// Delete any outdated scheduled Windows events and save the new one if necessary
-        /// </summary>
         private void setScheduledEvents()
         {
-            //TODO implement
+            using (TaskService taskService = new TaskService())
+            {
+                // Delete old task if it exists
+                if (taskService.FindTask("Wallpaper Setter") != null)
+                {
+                    taskService.RootFolder.DeleteTask("Wallpaper Setter");
+                }
+
+                // Define the trigger
+                Trigger trigger;
+                if (frequencyDdl.Text.Equals("Hourly"))
+                {
+                    // Run every hour since we register indefinitely
+                    trigger = new RegistrationTrigger();
+                    trigger.SetRepetition(new TimeSpan(1, 0, 0), TimeSpan.Zero);
+                }
+                else
+                {
+                    // Run every day at 6 am
+                    DateTime now = DateTime.Now;
+                    DateTime next = now.Date.AddHours(24 + 6);
+                    next = next.AddDays((now - next).Days);
+
+                    trigger = new DailyTrigger();
+                    trigger.StartBoundary = next;
+                }
+
+                // Define the task
+                TaskDefinition newTask = taskService.NewTask();
+                newTask.RegistrationInfo.Description = "Wallpaper Setter";
+                newTask.Triggers.Add(trigger);
+                newTask.Actions.Add(new ExecAction(utilPath));
+                taskService.RootFolder.RegisterTaskDefinition("Wallpaper Setter", newTask);
+            }
         }
     }
 }
