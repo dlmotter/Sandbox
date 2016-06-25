@@ -3,7 +3,7 @@
   <type>Wallpaper of the Day</type>
   <category></category>
   <filter></filter>
-  <frequency>Daily</frequency>
+  <frequency>Day</frequency>
   <file>%USERPROFILE%\daily_wallpaper.bmp</file>
   <keep>Yes</keep>
 </settings>

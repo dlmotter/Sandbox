@@ -67,6 +67,7 @@
             this.categoryDdl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.categoryDdl.FormattingEnabled = true;
             this.categoryDdl.Items.AddRange(new object[] {
+            "RANDOM",
             "Animals",
             "Architecture",
             "Bikes",
@@ -164,8 +165,9 @@
             this.frequencyDdl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.frequencyDdl.FormattingEnabled = true;
             this.frequencyDdl.Items.AddRange(new object[] {
-            "Daily",
-            "Hourly"});
+            "Day",
+            "Hour",
+            "Minute"});
             this.frequencyDdl.Location = new System.Drawing.Point(79, 93);
             this.frequencyDdl.Name = "frequencyDdl";
             this.frequencyDdl.Size = new System.Drawing.Size(442, 21);

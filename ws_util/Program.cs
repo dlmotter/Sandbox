@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
@@ -9,7 +10,6 @@ namespace ws_util
 {
     class Program
     {
-        // TODO unhardcode this
         private const string configPath = "ws_config.xml";
         public const string baseURL = "http://www.thepaperwall.com";
 
@@ -89,8 +89,20 @@ namespace ws_util
 
             if (type == "Category")
             {
+                // Get the id string
+                string catId = "";
+                if (category.Equals("RANDOM"))
+                {
+                    Random rand = new Random();
+                    catId = catDict.ElementAt(rand.Next(0, catDict.Count)).Value;
+                }
+                else
+                {
+                    catId = catDict[category];
+                }
+
                 // Category. Must build URL.
-                string pageUrl = string.Format("{0}/category.php?action=catcontent&c={1}&t=a&l=20&r=&cat={2}", baseURL, filterVal, catDict[category]);
+                string pageUrl = string.Format("{0}/category.php?action=catcontent&c={1}&t=a&l=20&r=&cat={2}", baseURL, filterVal, catId);
 
                 doc = web.Load(pageUrl);
                 imageSrc = doc.DocumentNode.SelectSingleNode("/html/body/div[2]/div[3]/div[1]/a/img").Attributes["src"].Value;

@@ -9,7 +9,6 @@ namespace Wallpaper_Setter
 {
     public partial class Form1 : Form
     {
-        // TODO unhardcode these
         private const string configPath = @"ws_config.xml";
         private const string utilPath = @"ws_util.exe";
 
@@ -138,15 +137,24 @@ namespace Wallpaper_Setter
 
                 // Define the trigger
                 Trigger trigger;
-                if (frequencyDdl.Text.Equals("Hourly"))
+                if (frequencyDdl.Text.Equals("Hour") || frequencyDdl.Text.Equals("Minute"))
                 {
-                    // Run every hour since we register indefinitely
+                    // Run either every hour or every minute from registration
                     trigger = new RegistrationTrigger();
-                    trigger.SetRepetition(new TimeSpan(1, 0, 0), TimeSpan.Zero);
+                    if (frequencyDdl.Text.Equals("Hour"))
+                    {
+                        trigger.SetRepetition(new TimeSpan(1, 0, 0), TimeSpan.Zero);
+                    }
+                    else
+                    {
+                        trigger.SetRepetition(new TimeSpan(0, 1, 0), TimeSpan.Zero);
+                    }
+                    
                 }
                 else
                 {
-                    // Run every day at 6 am
+                    // If they specify daily, or don't specify a frequency, run every day at 6 am
+                    // TODO make that time configurable
                     DateTime now = DateTime.Now;
                     DateTime next = now.Date.AddHours(24 + 6);
                     next = next.AddDays((now - next).Days);
