@@ -159,7 +159,8 @@ namespace Wallpaper_Setter
                 TaskDefinition newTask = taskService.NewTask();
                 newTask.RegistrationInfo.Description = "Wallpaper Setter";
                 newTask.Triggers.Add(trigger);
-                newTask.Actions.Add(new ExecAction(utilPath));
+                newTask.Actions.Add(new ExecAction(utilPath, workingDirectory: @"C:\Program Files\Wallpaper Setter"));
+                newTask.Settings.Enabled = true;
                 taskService.RootFolder.RegisterTaskDefinition("Wallpaper Setter", newTask);
             }
         }
