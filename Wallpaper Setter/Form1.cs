@@ -52,7 +52,10 @@ namespace Wallpaper_Setter
             }
 
             saveFileDialog1.ShowDialog();
-            fileTb.Text = saveFileDialog1.FileName;
+            if (saveFileDialog1.FileName.Trim().Length > 0)
+            {
+                fileTb.Text = saveFileDialog1.FileName;
+            }
         }
         #endregion
 

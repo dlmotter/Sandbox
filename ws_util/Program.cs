@@ -1,7 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
@@ -52,7 +52,6 @@ namespace ws_util
 
         private static string type;
         private static string category;
-        private static string filter;
         private static string filterVal;
         private static string file;
         private static bool keep;
@@ -67,56 +66,34 @@ namespace ws_util
         static void Main(string[] args)
         {
             LoadConfig();
-
-            string message = type;
-            if (!string.IsNullOrWhiteSpace(category))
-            {
-                message = string.Format("most {0} wallpaper in the {1} category", filter, category).ToLower();
-            }
-
-            Console.WriteLine(string.Format("Setting wallpaper to the {0}.", message));
-            Console.WriteLine(string.Format("Saving file to {0}", file));
-
             SetWallpaper(GetWallpaperURL());
         }
 
         static string GetWallpaperURL()
         {
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc;
-            string imageSrc ="";
-            string imageURL = "";
+            string pageURL = "";
+            string xPath = "";
 
-            if (type == "Category")
+            if (type.Equals("Category"))
             {
-                // Get the id string
-                string catId = "";
-                if (category.Equals("RANDOM"))
-                {
-                    Random rand = new Random();
-                    catId = catDict.ElementAt(rand.Next(0, catDict.Count)).Value;
-                }
-                else
-                {
-                    catId = catDict[category];
-                }
-
-                // Category. Must build URL.
-                string pageUrl = string.Format("{0}/category.php?action=catcontent&c={1}&t=a&l=20&r=&cat={2}", baseURL, filterVal, catId);
-
-                doc = web.Load(pageUrl);
-                imageSrc = doc.DocumentNode.SelectSingleNode("/html/body/div[2]/div[3]/div[1]/a/img").Attributes["src"].Value;
-                imageURL = string.Format("{0}{1}", baseURL, imageSrc.Substring(imageSrc.IndexOf("image=") + "image=".Length)).Replace("small/small", "big/big");  
+                pageURL = string.Format("{0}/category.php?action=catcontent&c={1}&t=a&l=20&r=&cat={2}", baseURL, filterVal, catDict[category]);
+                xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
+            }
+            else if (type.Equals("Shuffle"))
+            {
+                pageURL = string.Format("{0}/shuffle.php", baseURL);
+                xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
             }
             else
             {
-                // Wallpaper of the Day. Use baseUrl.
-                doc = web.Load(baseURL);
-                imageSrc = doc.DocumentNode.SelectSingleNode("//*[@id=\"main_leftcol\"]/div[2]/div/div[1]/a/img").Attributes["src"].Value;
-                imageURL = string.Format("{0}{1}", baseURL, imageSrc.Substring(imageSrc.IndexOf("image=") + "image=".Length));
+                pageURL = baseURL;
+                xPath = "//*[@id=\"main_leftcol\"]/div[2]/div/div[1]/a/img";
             }
 
-            return imageURL;
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument doc = web.Load(pageURL);
+            string imageSrc = doc.DocumentNode.SelectSingleNode(xPath).Attributes["src"].Value;
+            return string.Format("{0}{1}", baseURL, imageSrc.Substring(imageSrc.IndexOf("image=") + "image=".Length)).Replace("small/small", "big/big");
         }
 
         static void SetWallpaper(string URL)
@@ -125,6 +102,11 @@ namespace ws_util
             webClient.DownloadFile(URL, file);
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, file, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+
+            if (!keep)
+            {
+                File.Delete(file);
+            }
         }
 
         static void LoadConfig()
@@ -144,7 +126,6 @@ namespace ws_util
                             category = elem.Value;
                             break;
                         case "filter":
-                            filter = elem.Value;
                             filterVal = elem.Value == "Recent" ? "0" : "1";
                             break;
                         case "file":

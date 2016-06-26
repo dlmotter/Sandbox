@@ -67,7 +67,6 @@
             this.categoryDdl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.categoryDdl.FormattingEnabled = true;
             this.categoryDdl.Items.AddRange(new object[] {
-            "RANDOM",
             "Animals",
             "Architecture",
             "Bikes",
@@ -115,6 +114,7 @@
             this.typeDdl.FormattingEnabled = true;
             this.typeDdl.Items.AddRange(new object[] {
             "Wallpaper of the Day",
+            "Shuffle",
             "Category"});
             this.typeDdl.Location = new System.Drawing.Point(79, 12);
             this.typeDdl.Name = "typeDdl";
@@ -246,7 +246,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(533, 218);
+            this.ClientSize = new System.Drawing.Size(549, 257);
             this.Controls.Add(this.keepFileLbl);
             this.Controls.Add(this.keepFileDdl);
             this.Controls.Add(this.fileBtn);
@@ -261,8 +261,15 @@
             this.Controls.Add(this.typeLbl);
             this.Controls.Add(this.typeDdl);
             this.Controls.Add(this.categoryLbl);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(549, 257);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(549, 257);
             this.Name = "Form1";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Wallpaper Setter";
             this.ResumeLayout(false);
