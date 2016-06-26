@@ -129,30 +129,37 @@ namespace ws_util
 
         static void LoadConfig()
         {
-            XDocument config = XDocument.Load(configPath);
-
-            foreach (XElement elem in config.Root.Elements())
+            try
             {
-                switch (elem.Name.LocalName)
-                {
-                    case "type":
-                        type = elem.Value;
-                        break;
-                    case "category":
-                        category = elem.Value;
-                        break;
-                    case "filter":
-                        filter = elem.Value;
-                        filterVal = elem.Value == "Recent" ? "0" : "1";
-                        break;
-                    case "file":
-                        file = Environment.ExpandEnvironmentVariables(elem.Value);
-                        break;
-                    case "keep":
-                        keep = elem.Value == "Yes";
-                        break;
-                }
+                XDocument config = XDocument.Load(configPath);
 
+                foreach (XElement elem in config.Root.Elements())
+                {
+                    switch (elem.Name.LocalName)
+                    {
+                        case "type":
+                            type = elem.Value;
+                            break;
+                        case "category":
+                            category = elem.Value;
+                            break;
+                        case "filter":
+                            filter = elem.Value;
+                            filterVal = elem.Value == "Recent" ? "0" : "1";
+                            break;
+                        case "file":
+                            file = Environment.ExpandEnvironmentVariables(elem.Value);
+                            break;
+                        case "keep":
+                            keep = elem.Value == "Yes";
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }

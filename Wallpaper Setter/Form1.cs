@@ -170,6 +170,12 @@ namespace Wallpaper_Setter
                 newTask.Actions.Add(new ExecAction(utilPath, workingDirectory: @"C:\Program Files\Wallpaper Setter"));
                 newTask.Settings.Enabled = true;
                 taskService.RootFolder.RegisterTaskDefinition("Wallpaper Setter", newTask);
+
+                // Registration triggers get run automatically when created. But other types don't, so run manually if needed.
+                if (newTask.Triggers[0].TriggerType != TaskTriggerType.Registration)
+                {
+                    taskService.RootFolder.Tasks["Wallpaper Setter"].Run();
+                }
             }
         }
     }
