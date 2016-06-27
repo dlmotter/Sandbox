@@ -11,6 +11,7 @@ namespace ws_util
     class Program
     {
         private const string configPath = "ws_config.xml";
+        private const string logPath = "Wallpaper History.txt";
         public const string baseURL = "http://www.thepaperwall.com";
 
         private static Dictionary<string, string> catDict = new Dictionary<string, string>() {
@@ -66,7 +67,9 @@ namespace ws_util
         static void Main(string[] args)
         {
             LoadConfig();
-            SetWallpaper(GetWallpaperURL());
+            string URL = GetWallpaperURL();
+            SetWallpaper(URL);
+            LogURL(URL);
         }
 
         static string GetWallpaperURL()
@@ -141,6 +144,14 @@ namespace ws_util
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        static void LogURL(string URL)
+        {
+            using (StreamWriter file = new StreamWriter(logPath, true))
+            {
+                file.WriteLine(string.Format("{0:MM/dd/yyyy hh:mm:ss tt} - {1}", DateTime.Now, URL));
             }
         }
     }
