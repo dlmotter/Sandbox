@@ -15,7 +15,14 @@ namespace Wallpaper_Setter
         public Form1()
         {
             InitializeComponent();
-            parseConfig(false);
+            try
+            {
+                parseConfig(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error");
+            }
         }
 
         #region Event Handlers
@@ -33,10 +40,16 @@ namespace Wallpaper_Setter
             }
             else
             {
-                parseConfig(true);
-                setScheduledEvents();
-
-                MessageBox.Show("Save successful!");
+                try
+                {
+                    parseConfig(true);
+                    setScheduledEvents();
+                    MessageBox.Show("Save successful!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error");
+                }
             }
         }
 
@@ -61,70 +74,63 @@ namespace Wallpaper_Setter
 
         private void parseConfig(bool saving)
         {
-            try
+            XDocument config = XDocument.Load(configPath);
+
+            foreach (XElement elem in config.Root.Elements())
             {
-                XDocument config = XDocument.Load(configPath);
-
-                foreach (XElement elem in config.Root.Elements())
-                {
-                    if (saving)
-                    {
-                        switch (elem.Name.LocalName)
-                        {
-                            case "type":
-                                elem.Value = typeDdl.Text;
-                                break;
-                            case "category":
-                                elem.Value = typeDdl.Text == "Category" ? categoryDdl.Text : "";
-                                break;
-                            case "filter":
-                                elem.Value = typeDdl.Text == "Category" ? filterDdl.Text : "";
-                                break;
-                            case "frequency":
-                                elem.Value = frequencyDdl.Text;
-                                break;
-                            case "file":
-                                elem.Value = fileTb.Text;
-                                break;
-                            case "keep":
-                                elem.Value = keepFileDdl.Text;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        switch (elem.Name.LocalName)
-                        {
-                            case "type":
-                                typeDdl.Text = elem.Value.Trim().Length == 0 ? "Wallpaper of the Day" : elem.Value;
-                                break;
-                            case "category":
-                                categoryDdl.Text = elem.Value;
-                                break;
-                            case "filter":
-                                filterDdl.Text = elem.Value;
-                                break;
-                            case "frequency":
-                                frequencyDdl.Text = elem.Value.Trim().Length == 0 ? "Daily" : elem.Value;
-                                break;
-                            case "file":
-                                fileTb.Text = Environment.ExpandEnvironmentVariables(elem.Value);
-                                break;
-                            case "keep":
-                                keepFileDdl.Text = elem.Value;
-                                break;
-                        }
-                    }
-                }
-
                 if (saving)
                 {
-                    config.Save(configPath);
+                    switch (elem.Name.LocalName)
+                    {
+                        case "type":
+                            elem.Value = typeDdl.Text;
+                            break;
+                        case "category":
+                            elem.Value = typeDdl.Text == "Category" ? categoryDdl.Text : "";
+                            break;
+                        case "filter":
+                            elem.Value = typeDdl.Text == "Category" ? filterDdl.Text : "";
+                            break;
+                        case "frequency":
+                            elem.Value = frequencyDdl.Text;
+                            break;
+                        case "file":
+                            elem.Value = fileTb.Text;
+                            break;
+                        case "keep":
+                            elem.Value = keepFileDdl.Text;
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (elem.Name.LocalName)
+                    {
+                        case "type":
+                            typeDdl.Text = elem.Value.Trim().Length == 0 ? "Wallpaper of the Day" : elem.Value;
+                            break;
+                        case "category":
+                            categoryDdl.Text = elem.Value;
+                            break;
+                        case "filter":
+                            filterDdl.Text = elem.Value;
+                            break;
+                        case "frequency":
+                            frequencyDdl.Text = elem.Value.Trim().Length == 0 ? "Daily" : elem.Value;
+                            break;
+                        case "file":
+                            fileTb.Text = Environment.ExpandEnvironmentVariables(elem.Value);
+                            break;
+                        case "keep":
+                            keepFileDdl.Text = elem.Value;
+                            break;
+                    }
                 }
             }
-            catch (Exception ex)
+
+            if (saving)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                config.Save(configPath);
             }
         }
 
@@ -170,7 +176,7 @@ namespace Wallpaper_Setter
                 TaskDefinition newTask = taskService.NewTask();
                 newTask.RegistrationInfo.Description = "Wallpaper Setter";
                 newTask.Triggers.Add(trigger);
-                newTask.Actions.Add(new ExecAction(utilPath, workingDirectory: @"C:\Program Files\Wallpaper Setter"));
+                newTask.Actions.Add(new ExecAction(utilPath, workingDirectory: Directory.GetCurrentDirectory()));
                 newTask.Settings.Enabled = true;
                 taskService.RootFolder.RegisterTaskDefinition("Wallpaper Setter", newTask);
 

@@ -54,7 +54,8 @@
             this.filterDdl.FormattingEnabled = true;
             this.filterDdl.Items.AddRange(new object[] {
             "Recent",
-            "Popular"});
+            "Popular",
+            "Shuffle"});
             this.filterDdl.Location = new System.Drawing.Point(79, 66);
             this.filterDdl.Name = "filterDdl";
             this.filterDdl.Size = new System.Drawing.Size(442, 21);
@@ -114,8 +115,8 @@
             this.typeDdl.FormattingEnabled = true;
             this.typeDdl.Items.AddRange(new object[] {
             "Wallpaper of the Day",
-            "Shuffle",
-            "Category"});
+            "Category",
+            "Shuffle"});
             this.typeDdl.Location = new System.Drawing.Point(79, 12);
             this.typeDdl.Name = "typeDdl";
             this.typeDdl.Size = new System.Drawing.Size(442, 21);
@@ -246,7 +247,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 257);
+            this.ClientSize = new System.Drawing.Size(533, 218);
             this.Controls.Add(this.keepFileLbl);
             this.Controls.Add(this.keepFileDdl);
             this.Controls.Add(this.fileBtn);
