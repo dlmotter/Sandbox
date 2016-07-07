@@ -263,14 +263,12 @@
             this.Controls.Add(this.typeDdl);
             this.Controls.Add(this.categoryLbl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(549, 257);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(549, 257);
             this.Name = "Form1";
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Wallpaper Setter";
             this.ResumeLayout(false);
