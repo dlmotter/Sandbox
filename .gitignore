@@ -99,3 +99,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/Wallpaper Setter/Wallpaper Setter.exe.config
+/Wallpaper Setter/Wallpaper Setter.vshost.exe.config
