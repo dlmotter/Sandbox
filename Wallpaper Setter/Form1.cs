@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32.TaskScheduler;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -152,13 +151,12 @@ namespace Wallpaper_Setter
                     trigger = new RegistrationTrigger();
                     if (frequencyDdl.Text.Equals("Hour"))
                     {
-                        trigger.SetRepetition(new TimeSpan(1, 0, 0), TimeSpan.Zero);
+                        trigger.Repetition = new RepetitionPattern(new TimeSpan(1, 0, 0), TimeSpan.Zero);
                     }
                     else
                     {
-                        trigger.SetRepetition(new TimeSpan(0, 1, 0), TimeSpan.Zero);
+                        trigger.Repetition = new RepetitionPattern(new TimeSpan(0, 1, 0), TimeSpan.Zero);
                     }
-                    
                 }
                 else
                 {
