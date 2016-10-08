@@ -44,6 +44,9 @@
             this.keepFileDdl = new System.Windows.Forms.ComboBox();
             this.keepFileLbl = new System.Windows.Forms.Label();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.deleteBtn = new System.Windows.Forms.Button();
+            this.infoLbl = new System.Windows.Forms.Label();
+            this.linkLbl = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // filterDdl
@@ -54,7 +57,7 @@
             this.filterDdl.FormattingEnabled = true;
             this.filterDdl.Items.AddRange(new object[] {
             "Recent",
-            "Popular",
+            "Popular (Last 24 Hours)",
             "Shuffle"});
             this.filterDdl.Location = new System.Drawing.Point(79, 66);
             this.filterDdl.Name = "filterDdl";
@@ -177,12 +180,15 @@
             // saveBtn
             // 
             this.saveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.saveBtn.BackColor = System.Drawing.Color.PaleGreen;
+            this.saveBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.saveBtn.ForeColor = System.Drawing.Color.DarkGreen;
             this.saveBtn.Location = new System.Drawing.Point(446, 183);
             this.saveBtn.Name = "saveBtn";
             this.saveBtn.Size = new System.Drawing.Size(75, 23);
             this.saveBtn.TabIndex = 6;
             this.saveBtn.Text = "Save";
-            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.UseVisualStyleBackColor = false;
             this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
             // fileTb
@@ -243,11 +249,53 @@
             this.saveFileDialog1.DefaultExt = "bmp";
             this.saveFileDialog1.Filter = "Bitmap Files (*.bmp)|*.bmp";
             // 
+            // deleteBtn
+            // 
+            this.deleteBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.deleteBtn.BackColor = System.Drawing.Color.LightCoral;
+            this.deleteBtn.FlatAppearance.BorderColor = System.Drawing.Color.Maroon;
+            this.deleteBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.deleteBtn.ForeColor = System.Drawing.Color.Maroon;
+            this.deleteBtn.Location = new System.Drawing.Point(365, 183);
+            this.deleteBtn.Name = "deleteBtn";
+            this.deleteBtn.Size = new System.Drawing.Size(75, 23);
+            this.deleteBtn.TabIndex = 12;
+            this.deleteBtn.Text = "Stop";
+            this.deleteBtn.UseVisualStyleBackColor = true;
+            this.deleteBtn.Click += new System.EventHandler(this.deleteBtn_Click);
+            // 
+            // infoLbl
+            // 
+            this.infoLbl.AutoSize = true;
+            this.infoLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.infoLbl.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.infoLbl.Location = new System.Drawing.Point(12, 188);
+            this.infoLbl.Name = "infoLbl";
+            this.infoLbl.Size = new System.Drawing.Size(123, 13);
+            this.infoLbl.TabIndex = 13;
+            this.infoLbl.Text = "All wallpapers come from";
+            // 
+            // linkLbl
+            // 
+            this.linkLbl.AutoSize = true;
+            this.linkLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLbl.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline;
+            this.linkLbl.Location = new System.Drawing.Point(132, 188);
+            this.linkLbl.Name = "linkLbl";
+            this.linkLbl.Size = new System.Drawing.Size(90, 13);
+            this.linkLbl.TabIndex = 14;
+            this.linkLbl.TabStop = true;
+            this.linkLbl.Text = "thepaperwall.com";
+            this.linkLbl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 218);
+            this.Controls.Add(this.linkLbl);
+            this.Controls.Add(this.infoLbl);
+            this.Controls.Add(this.deleteBtn);
             this.Controls.Add(this.keepFileLbl);
             this.Controls.Add(this.keepFileDdl);
             this.Controls.Add(this.fileBtn);
@@ -292,6 +340,9 @@
         private System.Windows.Forms.ComboBox keepFileDdl;
         private System.Windows.Forms.Label keepFileLbl;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Button deleteBtn;
+        private System.Windows.Forms.Label infoLbl;
+        private System.Windows.Forms.LinkLabel linkLbl;
     }
 }
 

@@ -43,7 +43,7 @@ namespace Wallpaper_Setter
                 {
                     parseConfig(true);
                     setScheduledEvents();
-                    MessageBox.Show("Save successful!");
+                    MessageBox.Show("Save successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -68,6 +68,36 @@ namespace Wallpaper_Setter
             {
                 fileTb.Text = saveFileDialog1.FileName;
             }
+        }
+
+        private void deleteBtn_Click(object sender, EventArgs e)
+        {
+            var result =  MessageBox.Show("This will cancel automatic wallpaper changing. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            // User wants to delete the wallpaper setter task
+            if (result == DialogResult.Yes)
+            {
+                using (TaskService taskService = new TaskService())
+                {
+                    if (taskService.FindTask("Wallpaper Setter") != null)
+                    {
+                        try
+                        {
+                            taskService.RootFolder.DeleteTask("Wallpaper Setter");
+                            MessageBox.Show("Save successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message, "Error");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void linkLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://www.thepaperwall.com");
         }
         #endregion
 
