@@ -72,7 +72,7 @@ namespace Wallpaper_Setter
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
-            var result =  MessageBox.Show("This will cancel automatic wallpaper changing. Do you wish to continue?", "Continue?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result =  MessageBox.Show("This will cancel automatic wallpaper changing.\nDo you wish to continue?", "Continue?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             // User wants to delete the wallpaper setter task
             if (result == DialogResult.Yes)

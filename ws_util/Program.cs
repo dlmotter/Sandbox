@@ -101,8 +101,8 @@ namespace ws_util
                 }
                 else
                 {
-                    var filterVal = filter == "Recent" ? "0" : "1";
-                    pageURL = string.Format("{0}/category.php?action=catcontent&c={1}&t=1&l=20&r=&cat={2}", baseURL, filterVal, catDict[category].uId);
+                    var filterVal = filter == "Recent" ? "0" : "1&t=1";
+                    pageURL = string.Format("{0}/category.php?action=catcontent&c={1}&l=20&r=&cat={2}", baseURL, filterVal, catDict[category].uId);
                 }
                 xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
             }
