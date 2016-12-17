@@ -59,6 +59,7 @@ namespace ws_util
 
         private static string type;
         private static string category;
+        private static string query;
         private static string filter;
         private static string file;
         private static bool keep;
@@ -82,43 +83,60 @@ namespace ws_util
         {
             string pageURL = "";
             string xPath = "";
-
-            if (type.Equals("Category"))
+            HtmlDocument doc = null;
+            var web = new HtmlWeb() { UseCookies = true };
+            web.PreRequest += request =>
             {
-                if (filter.Equals("Shuffle"))
-                {
-                    // Build out a list of all filter ids that are NOT equal to the one we are filtering
-                    List<int> filterVals = new List<int>();
-                    foreach (CategoryDetail detail in catDict.Values)
+                var cookieContainer = request.CookieContainer;
+                cookieContainer.Add(new Cookie() { Name = "tpwSwnsw", Value = "false", Domain = "thepaperwall.com" });
+                return true;
+            };
+
+            switch (type)
+            {
+                default:
+                    pageURL = baseURL;
+                    xPath = "//*[@id=\"main_leftcol\"]/div[2]/div/div[1]/a/img";
+                    break;
+                case "Shuffle":
+                    pageURL = string.Format("{0}/shuffle.php", baseURL);
+                    xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
+                    break;
+                case "Search":
+                    pageURL = string.Format("{0}/search.php?search={1}", baseURL, query);
+                    doc = web.Load(pageURL);
+                    // Get number of search results and randomly choose one
+                    var count = doc.DocumentNode.SelectNodes("//*[@class=\"single_thumbnail_cont\"]").Count;
+                    if (count == 0) throw new Exception(string.Format("No results found on {0} for \"{1}\"", baseURL, query));
+                    var rand = new Random();
+                    xPath = string.Format("/html/body/div[2]/div[3]/div[{0}]/a/img", rand.Next(1, count + 1));
+                    break;
+                case "Category":
+                    if (filter.Equals("Shuffle"))
                     {
-                        if (!detail.filterId.Equals(catDict[category].filterId))
+                        // Build out a list of all filter ids that are NOT equal to the one we are filtering
+                        List<int> filterVals = new List<int>();
+                        foreach (CategoryDetail detail in catDict.Values)
                         {
-                            filterVals.Add(detail.filterId);
+                            if (!detail.filterId.Equals(catDict[category].filterId))
+                            {
+                                filterVals.Add(detail.filterId);
+                            }
                         }
+
+                        pageURL = string.Format("{0}/shuffle.php?ex=[{1}]", baseURL, string.Join("|", filterVals));
                     }
-
-                    pageURL = string.Format("{0}/shuffle.php?ex=[{1}]", baseURL, string.Join("|", filterVals));
-                }
-                else
-                {
-                    var filterVal = filter == "Recent" ? "0" : "1&t=1";
-                    pageURL = string.Format("{0}/category.php?action=catcontent&c={1}&l=20&r=&cat={2}", baseURL, filterVal, catDict[category].uId);
-                }
-                xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
-            }
-            else if (type.Equals("Shuffle"))
-            {
-                pageURL = string.Format("{0}/shuffle.php", baseURL);
-                xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
-            }
-            else
-            {
-                pageURL = baseURL;
-                xPath = "//*[@id=\"main_leftcol\"]/div[2]/div/div[1]/a/img";
+                    else
+                    {
+                        var filterVal = filter == "Recent" ? "0" : "1&t=1";
+                        pageURL = string.Format("{0}/category.php?action=catcontent&c={1}&l=20&r=&cat={2}", baseURL, filterVal, catDict[category].uId);
+                    }
+                    xPath = "/html/body/div[2]/div[3]/div[1]/a/img";
+                    break;
             }
 
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load(pageURL);
+            // Don't download doc if we've already got it
+            if (doc == null) doc = web.Load(pageURL);
             string imageSrc = doc.DocumentNode.SelectSingleNode(xPath).Attributes["src"].Value;
             return string.Format("{0}{1}", baseURL, imageSrc.Substring(imageSrc.IndexOf("image=") + "image=".Length)).Replace("small/small", "big/big");
         }
@@ -126,48 +144,42 @@ namespace ws_util
         static void SetWallpaper(string URL)
         {
             WebClient webClient = new WebClient();
+            webClient.Headers.Add(HttpRequestHeader.Cookie, "tpwSwnsw=false");
             webClient.DownloadFile(URL, file);
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, file, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
 
-            if (!keep)
-            {
-                File.Delete(file);
-            }
+            if (!keep) File.Delete(file);
         }
 
         static void LoadConfig()
         {
-            try
-            {
-                XDocument config = XDocument.Load(configPath);
+            XDocument config = XDocument.Load(configPath);
 
-                foreach (XElement elem in config.Root.Elements())
+            foreach (XElement elem in config.Root.Elements())
+            {
+                switch (elem.Name.LocalName)
                 {
-                    switch (elem.Name.LocalName)
-                    {
-                        case "type":
-                            type = elem.Value;
-                            break;
-                        case "category":
-                            category = elem.Value;
-                            break;
-                        case "filter":
-                            filter = elem.Value;
-                            break;
-                        case "file":
-                            file = Environment.ExpandEnvironmentVariables(elem.Value);
-                            break;
-                        case "keep":
-                            keep = elem.Value == "Yes";
-                            break;
-                    }
-
+                    case "type":
+                        type = elem.Value;
+                        break;
+                    case "category":
+                        category = elem.Value;
+                        break;
+                    case "filter":
+                        filter = elem.Value;
+                        break;
+                    case "query":
+                        query = elem.Value;
+                        break;
+                    case "file":
+                        file = Environment.ExpandEnvironmentVariables(elem.Value);
+                        break;
+                    case "keep":
+                        keep = elem.Value == "Yes";
+                        break;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+
             }
         }
 

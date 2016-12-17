@@ -47,6 +47,8 @@
             this.deleteBtn = new System.Windows.Forms.Button();
             this.infoLbl = new System.Windows.Forms.Label();
             this.linkLbl = new System.Windows.Forms.LinkLabel();
+            this.queryTb = new System.Windows.Forms.TextBox();
+            this.queryLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // filterDdl
@@ -119,7 +121,8 @@
             this.typeDdl.Items.AddRange(new object[] {
             "Wallpaper of the Day",
             "Category",
-            "Shuffle"});
+            "Shuffle",
+            "Search"});
             this.typeDdl.Location = new System.Drawing.Point(79, 12);
             this.typeDdl.Name = "typeDdl";
             this.typeDdl.Size = new System.Drawing.Size(442, 21);
@@ -288,11 +291,30 @@
             this.linkLbl.Text = "thepaperwall.com";
             this.linkLbl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_LinkClicked);
             // 
+            // queryTb
+            // 
+            this.queryTb.Location = new System.Drawing.Point(78, 39);
+            this.queryTb.Name = "queryTb";
+            this.queryTb.Size = new System.Drawing.Size(443, 20);
+            this.queryTb.TabIndex = 15;
+            // 
+            // queryLbl
+            // 
+            this.queryLbl.AutoSize = true;
+            this.queryLbl.Location = new System.Drawing.Point(12, 42);
+            this.queryLbl.Name = "queryLbl";
+            this.queryLbl.Size = new System.Drawing.Size(35, 13);
+            this.queryLbl.TabIndex = 16;
+            this.queryLbl.Text = "Query";
+            // 
             // Form1
             // 
+            this.AcceptButton = this.saveBtn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(533, 218);
+            this.Controls.Add(this.queryLbl);
+            this.Controls.Add(this.queryTb);
             this.Controls.Add(this.linkLbl);
             this.Controls.Add(this.infoLbl);
             this.Controls.Add(this.deleteBtn);
@@ -343,6 +365,8 @@
         private System.Windows.Forms.Button deleteBtn;
         private System.Windows.Forms.Label infoLbl;
         private System.Windows.Forms.LinkLabel linkLbl;
+        private System.Windows.Forms.TextBox queryTb;
+        private System.Windows.Forms.Label queryLbl;
     }
 }
 

@@ -27,8 +27,18 @@ namespace Wallpaper_Setter
         #region Event Handlers
         private void typeDdl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            categoryDdl.Enabled = typeDdl.Text == "Category";
-            filterDdl.Enabled = typeDdl.Text == "Category";
+            var categorySelected = typeDdl.Text == "Category";
+            var searchSelected = typeDdl.Text == "Search";
+
+            // "Category"-only fields
+            categoryDdl.Visible = categorySelected;
+            categoryLbl.Visible = categorySelected;
+            filterDdl.Visible = categorySelected;
+            filterLbl.Visible = categorySelected;
+
+            // "Search"-only fields
+            queryTb.Visible = searchSelected;
+            queryLbl.Visible = searchSelected;
         }
 
         private void saveBtn_Click(object sender, EventArgs e)
@@ -58,7 +68,7 @@ namespace Wallpaper_Setter
             {
                 saveFileDialog1.InitialDirectory = Path.GetDirectoryName(fileTb.Text);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 saveFileDialog1.InitialDirectory = "%USERPROFILE%";
             }
@@ -120,6 +130,9 @@ namespace Wallpaper_Setter
                         case "filter":
                             elem.Value = typeDdl.Text == "Category" ? filterDdl.Text : "";
                             break;
+                        case "query":
+                            elem.Value = typeDdl.Text == "Search" ? queryTb.Text : "";
+                            break;
                         case "frequency":
                             elem.Value = frequencyDdl.Text;
                             break;
@@ -143,6 +156,9 @@ namespace Wallpaper_Setter
                             break;
                         case "filter":
                             filterDdl.Text = elem.Value;
+                            break;
+                        case "query":
+                            queryTb.Text = elem.Value;
                             break;
                         case "frequency":
                             frequencyDdl.Text = elem.Value.Trim().Length == 0 ? "Daily" : elem.Value;
