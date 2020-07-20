@@ -8,3 +8,7 @@ The old python scripts folder contains stuff from my early days of programming t
 
 Some of the python files need Pillow installed
 https://pillow.readthedocs.org/en/3.2.x/installation.html
+
+---
+
+Wallpaper Setter and ws_util no longer work because the website they were using to pull wallpapers from is gone. But they were fun to write so I'm leaving them here.
